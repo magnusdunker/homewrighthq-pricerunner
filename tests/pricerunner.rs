@@ -264,6 +264,10 @@ async fn options_flow_removes_and_adds() {
     assert_eq!(r["result"]["type"], "create_entry");
     assert_eq!(r["result"]["data"]["products"].as_array().unwrap().len(), 1);
 
+    // without the field nothing is removed
+    let r = host.call("options_flow", options("init", json!({ "links": IPHONE }))).await.unwrap();
+    assert_eq!(r["result"]["data"]["products"].as_array().unwrap().len(), 2);
+
     // search from the options too, keeping the product that is there
     let r = host.call("options_flow", options("init", json!({ "keep": [IPHONE], "search": "iphone 16" }))).await.unwrap();
     assert_eq!(r["result"]["step_id"], "pick");

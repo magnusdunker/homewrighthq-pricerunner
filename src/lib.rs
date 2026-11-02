@@ -280,7 +280,11 @@ impl Pricerunner {
                     Some((s, _)) => s,
                     None => api::site(text(&v, "site")).unwrap_or(&api::SITES[0]),
                 };
-                let keep_ids = str_list(&v["keep"]);
+                // a form sent without the field keeps every product
+                let keep_ids = match v.get("keep") {
+                    Some(k) if !k.is_null() => str_list(k),
+                    _ => current.map(|(_, c)| c.iter().map(|p| p.id.clone()).collect()).unwrap_or_default(),
+                };
                 let again = |errors: Value| {
                     let schema = keep_input(blank(site.key, &keep_ids), &v);
                     Ok(Err(form_with(first, schema, None, Some(errors))))
