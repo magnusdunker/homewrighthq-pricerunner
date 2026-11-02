@@ -6,13 +6,12 @@
     "init": { "title": "Products", "description": "Remove products, or add new ones with a link or a search." },
     "alerts": { "title": "Price alert", "description": "Enter the most you want to pay for a product. When the lowest price is at or below it, you get one message. Leave the field empty for no message." }
   },
-  "fields": { "site": "Country", "links": "Links", "search": "Search", "found": "Products found", "keep": "Products", "notify": "Message by", "notify_people": "Push to people", "notify_devices": "Push to devices", "notify_service": "Other service" },
+  "fields": { "site": "Country", "links": "Links", "search": "Search", "found": "Products found", "keep": "Products", "notify": "Message by", "notify_users": "Push to users", "notify_service": "Other service" },
   "hints": {
     "links": "Links to products on Pricerunner, one per line. Copy the address from the product's page.",
     "search": "Or search for a product by name.",
     "keep": "Untick a product to stop following it.",
-    "notify_people": "The devices of the person's user. With no people and no devices the message goes to everyone with push turned on.",
-    "notify_devices": "The names under Profile → Push notifications, e.g. Magnus Telefon. One per line.",
+    "notify_users": "The users' phones and browsers with push turned on. None picked means everyone.",
     "notify_service": "E.g. notify.telegram. Used when \"Another service\" is chosen."
   },
   "values": {

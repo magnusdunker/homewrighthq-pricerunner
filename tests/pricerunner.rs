@@ -235,11 +235,10 @@ async fn config_flow_alert_settings() {
     assert_eq!(d["max_prices"], json!({ IPHONE: 5999.5 }));
     assert_eq!(d["notify"], "notify.telegram");
 
-    let input = json!({ max.clone(): 6000, "notify": "web_push", "notify_people": ["person.magnus"], "notify_devices": "Magnus Telefon\n Chrome · Windows ,\n" });
+    let input = json!({ max.clone(): 6000, "notify": "web_push", "notify_users": ["u1", " ", "u2"] });
     let r = host.call("config_flow", alerts(data.clone(), input)).await.unwrap();
     let d = &r["result"]["data"];
-    assert_eq!((d["notify"].clone(), d["notify_people"].clone()), (json!("web_push"), json!(["person.magnus"])));
-    assert_eq!(d["notify_devices"], json!(["Magnus Telefon", "Chrome · Windows"]));
+    assert_eq!((d["notify"].clone(), d["notify_users"].clone()), (json!("web_push"), json!(["u1", "u2"])));
     let r = host.call("config_flow", alerts(data, json!({ "notify": "all" }))).await.unwrap();
     assert_eq!(r["result"]["data"]["notify"], "notify.notify");
 }
@@ -450,8 +449,8 @@ async fn a_price_alert_is_sent_once() {
     let host = start(&server).await;
     let calls = || host.rec.lock().unwrap().calls.clone();
 
-    // 6118 kr. is under 6500: one push to the person, with the product page
-    let push = json!({ "notify": "web_push", "notify_people": ["person.magnus"], "notify_devices": ["Magnus Telefon"] });
+    // 6118 kr. is under 6500: one push to the user's devices, with the product page
+    let push = json!({ "notify": "web_push", "notify_users": ["u1"] });
     host.call("setup_entry", json!({ "entry": with_alert(6500.0, push.clone()) })).await.unwrap();
     let c = calls();
     assert_eq!(c.len(), 1, "{c:?}");
@@ -459,7 +458,7 @@ async fn a_price_alert_is_sent_once() {
     let d = &c[0]["data"];
     assert_eq!(d["title"], "Prisalarm: Apple iPhone 16, 128GB Black");
     assert_eq!(d["message"], "Apple iPhone 16, 128GB Black koster 6118 DKK hos NordicElectronics. Din grænse er 6500 DKK.");
-    assert_eq!(d["target"], json!(["person.magnus", "Magnus Telefon"]));
+    assert_eq!(d["target"], json!(["u1"]));
     assert!(d["data"]["url"].as_str().unwrap().starts_with("https://www.pricerunner.dk/pl/1-3397102161"));
 
     // the next updates and a restart send nothing more

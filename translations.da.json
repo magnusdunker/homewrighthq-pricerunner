@@ -6,13 +6,12 @@
     "init": { "title": "Produkter", "description": "Fjern produkter, eller tilføj nye med et link eller en søgning." },
     "alerts": { "title": "Prisalarm", "description": "Skriv den højeste pris, du vil give for et produkt. Når den laveste pris er på eller under, får du én besked. Lad feltet stå tomt for ingen besked." }
   },
-  "fields": { "site": "Land", "links": "Links", "search": "Søg", "found": "Fundne produkter", "keep": "Produkter", "notify": "Besked med", "notify_people": "Push til personer", "notify_devices": "Push til enheder", "notify_service": "Anden tjeneste" },
+  "fields": { "site": "Land", "links": "Links", "search": "Søg", "found": "Fundne produkter", "keep": "Produkter", "notify": "Besked med", "notify_users": "Push til brugere", "notify_service": "Anden tjeneste" },
   "hints": {
     "links": "Links til produkter på Pricerunner, ét pr. linje. Kopiér adressen fra produktets side.",
     "search": "Eller søg efter et produkt ved navn.",
     "keep": "Fjern fluebenet for at holde op med at følge et produkt.",
-    "notify_people": "Personens brugers enheder. Uden personer og enheder går beskeden til alle med push slået til.",
-    "notify_devices": "Navnene fra Profil → Push-beskeder, fx Magnus Telefon. Ét pr. linje.",
+    "notify_users": "Brugernes telefoner og browsere med push slået til. Ingen valgt betyder alle.",
     "notify_service": "Fx notify.telegram. Bruges, når \"En anden tjeneste\" er valgt."
   },
   "values": {

@@ -5,9 +5,8 @@
 //! - `max_prices`: product id -> maximum price
 //! - `notify`: `web_push`, `persistent_notification` or a `notify.<name>`
 //!   service such as `notify.notify` or `notify.telegram`
-//! - `notify_people`: `person.*` entities for `web_push`
-//! - `notify_devices`: names of push devices, as under Profil → Push-beskeder;
-//!   with no people and no devices the push goes to everyone
+//! - `notify_users`: HomewrightHQ user ids for `web_push`; the push goes to
+//!   their devices, and with no users to everyone
 //!
 //! What was sent is kept in `alerts.json` in the integration's data folder,
 //! so a restart does not send the same message again. A price above the
@@ -34,8 +33,8 @@ static FILE: Mutex<()> = Mutex::new(());
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Notify {
-    /// `notify.web_push` to these people and devices, or everyone.
-    Push { people: Vec<String>, devices: Vec<String> },
+    /// `notify.web_push` to these users' devices, or everyone's.
+    Push(Vec<String>),
     /// `persistent_notification.create`.
     Persistent,
     /// `notify.<name>`.
@@ -48,25 +47,12 @@ pub struct Alerts {
     pub notify: Notify,
 }
 
-fn people(v: Option<&Value>) -> Vec<String> {
+fn users(v: Option<&Value>) -> Vec<String> {
     match v {
         Some(Value::Array(a)) => a.iter().filter_map(Value::as_str).map(str::trim).filter(|s| !s.is_empty()).map(String::from).collect(),
         Some(Value::String(s)) if !s.trim().is_empty() => vec![s.trim().to_string()],
         _ => vec![],
     }
-}
-
-/// Device names from the form: a list, or text with one name per line or
-/// separated by commas. Names have spaces, e.g. "Magnus Telefon".
-fn devices(v: Option<&Value>) -> Vec<String> {
-    match v {
-        Some(Value::String(s)) => s.split(['\n', ',']).map(str::trim).filter(|s| !s.is_empty()).map(String::from).collect(),
-        other => people(other),
-    }
-}
-
-fn push<'a>(get: impl Fn(&str) -> Option<&'a Value> + Copy) -> Notify {
-    Notify::Push { people: people(get("notify_people")), devices: devices(get("notify_devices")) }
 }
 
 /// A number from the form: a number, a string with a comma or a point, or
@@ -107,7 +93,7 @@ impl Alerts {
             PERSISTENT => Notify::Persistent,
             s => match s.strip_prefix("notify.").and_then(|_| service_name(s)) {
                 Some(svc) => Notify::Service(svc),
-                None => push(&get),
+                None => Notify::Push(users(get("notify_users"))),
             },
         };
         Self { max, notify }
@@ -117,14 +103,13 @@ impl Alerts {
         let mut m = Map::new();
         let max: Map<String, Value> = self.max.iter().map(|(k, v)| (k.clone(), json!(v))).collect();
         m.insert("max_prices".into(), Value::Object(max));
-        let (notify, people, devices) = match &self.notify {
-            Notify::Push { people, devices } => (PUSH.to_string(), people.clone(), devices.clone()),
-            Notify::Persistent => (PERSISTENT.to_string(), vec![], vec![]),
-            Notify::Service(s) => (s.clone(), vec![], vec![]),
+        let (notify, users) = match &self.notify {
+            Notify::Push(u) => (PUSH.to_string(), u.clone()),
+            Notify::Persistent => (PERSISTENT.to_string(), vec![]),
+            Notify::Service(s) => (s.clone(), vec![]),
         };
         m.insert("notify".into(), json!(notify));
-        m.insert("notify_people".into(), json!(people));
-        m.insert("notify_devices".into(), json!(devices));
+        m.insert("notify_users".into(), json!(users));
         m
     }
 
@@ -137,7 +122,7 @@ impl Alerts {
 
 impl Default for Alerts {
     fn default() -> Self {
-        Self { max: HashMap::new(), notify: Notify::Push { people: vec![], devices: vec![] } }
+        Self { max: HashMap::new(), notify: Notify::Push(vec![]) }
     }
 }
 
@@ -155,12 +140,11 @@ pub fn schema(products: &[Product], current: &Alerts, currency: &str) -> Value {
         }
         props.insert(max_key(&p.id), f);
     }
-    let none = (vec![], vec![]);
-    let (choice, other, (who, names)) = match &current.notify {
-        Notify::Push { people, devices } => (PUSH.to_string(), String::new(), (people.clone(), devices.clone())),
-        Notify::Persistent => (PERSISTENT.to_string(), String::new(), none),
-        Notify::Service(s) if s == ALL => (ALL_CHOICE.to_string(), String::new(), none),
-        Notify::Service(s) => (OTHER.to_string(), s.clone(), none),
+    let (choice, other, who) = match &current.notify {
+        Notify::Push(u) => (PUSH.to_string(), String::new(), u.clone()),
+        Notify::Persistent => (PERSISTENT.to_string(), String::new(), vec![]),
+        Notify::Service(s) if s == ALL => (ALL_CHOICE.to_string(), String::new(), vec![]),
+        Notify::Service(s) => (OTHER.to_string(), s.clone(), vec![]),
     };
     props.insert(
         "notify".into(),
@@ -175,18 +159,11 @@ pub fn schema(products: &[Product], current: &Alerts, currency: &str) -> Value {
         }),
     );
     props.insert(
-        "notify_people".into(),
+        "notify_users".into(),
         json!({
-            "type": "array", "title": "Push til personer", "items": { "type": "string" }, "default": who,
-            "description": "Personens brugers enheder. Uden personer og enheder går beskeden til alle med push slået til.",
-            "x-selector": { "entity": { "domain": ["person"], "multiple": true } }
-        }),
-    );
-    props.insert(
-        "notify_devices".into(),
-        json!({
-            "type": "string", "title": "Push til enheder", "default": names.join("\n"), "format": "textarea",
-            "description": "Navnene fra Profil → Push-beskeder, fx Magnus Telefon. Ét pr. linje."
+            "type": "array", "title": "Push til brugere", "items": { "type": "string" }, "default": who,
+            "description": "Brugernes telefoner og browsere med push slået til. Ingen valgt betyder alle.",
+            "x-selector": { "user": { "multiple": true } }
         }),
     );
     props.insert(
@@ -225,7 +202,7 @@ pub fn from_input(products: &[Product], input: &Value) -> Result<Alerts, Value> 
                 Notify::Persistent
             }
         },
-        _ => push(|k| input.get(k)),
+        _ => Notify::Push(users(input.get("notify_users"))),
     };
     if errors.is_empty() {
         Ok(Alerts { max, notify })
@@ -331,11 +308,10 @@ pub async fn check(host: &Host, sent: &Sent, alerts: &Alerts, entry_id: &str, pr
 
 async fn send(host: &Host, alerts: &Alerts, entry_id: &str, product: &Product, url: &str, title: &str, message: &str) -> Result<(), thehome_plugin::Error> {
     let (domain, service, mut data) = match &alerts.notify {
-        Notify::Push { people, devices } => {
+        Notify::Push(users) => {
             let mut d = json!({ "title": title, "message": message, "data": { "url": url, "tag": format!("pricerunner-{}", product.id) } });
-            let target: Vec<&String> = people.iter().chain(devices).collect();
-            if !target.is_empty() {
-                d["target"] = json!(target);
+            if !users.is_empty() {
+                d["target"] = json!(users);
             }
             ("notify", PUSH.to_string(), d)
         }
@@ -372,7 +348,7 @@ mod tests {
 
     #[test]
     fn settings_round_trip() {
-        let push = Notify::Push { people: vec!["person.magnus".into()], devices: vec!["Magnus Telefon".into(), "Chrome · Windows".into()] };
+        let push = Notify::Push(vec!["u1".into(), "u2".into()]);
         for notify in [push, Notify::Persistent, Notify::Service("notify.telegram".into())] {
             let a = Alerts { max: HashMap::from([("1".to_string(), 6000.0)]), notify };
             let m = Value::Object(a.to_json());
