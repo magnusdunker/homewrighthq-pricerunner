@@ -1,0 +1,112 @@
+{
+ "products": [
+  {
+   "id": "3406824728",
+   "name": "Apple iPhone 16e, 128GB Black",
+   "url": "/pl/1-3406824728/Mobiltelefoner/Apple-iPhone-16e-128GB-Black-Sammenlign-Priser",
+   "categoryName": "Mobiltelefoner",
+   "lowestPrice": {
+    "amount": "4699.00",
+    "currency": "DKK"
+   },
+   "image": {
+    "id": "3217704649",
+    "url": null,
+    "path": "/product/3217704649/Apple-iPhone-16e-128GB-Black.jpg",
+    "description": "Apple iPhone 16e, 128GB Black"
+   },
+   "outOfStock": false,
+   "condition": "NEW"
+  },
+  {
+   "id": "3397102161",
+   "name": "Apple iPhone 16, 128GB Black",
+   "url": "/pl/1-3397102161/Mobiltelefoner/Apple-iPhone-16-128GB-Black-Sammenlign-Priser",
+   "categoryName": "Mobiltelefoner",
+   "lowestPrice": {
+    "amount": "6118.00",
+    "currency": "DKK"
+   },
+   "image": {
+    "id": "3202898799",
+    "url": null,
+    "path": "/product/3202898799/Apple-iPhone-16-128GB-Black.jpg",
+    "description": "Apple iPhone 16, 128GB Black"
+   },
+   "outOfStock": false,
+   "condition": "NEW"
+  },
+  {
+   "id": "3396319139",
+   "name": "Apple iPhone 16e, 128GB White",
+   "url": "/pl/1-3396319139/Mobiltelefoner/Apple-iPhone-16e-128GB-Sammenlign-Priser",
+   "categoryName": "Mobiltelefoner",
+   "lowestPrice": {
+    "amount": "4999.00",
+    "currency": "DKK"
+   },
+   "image": {
+    "id": "3202041254",
+    "url": null,
+    "path": "/product/3202041254/Apple-iPhone-16e-128GB-White.jpg",
+    "description": "Apple iPhone 16e, 128GB White"
+   },
+   "outOfStock": false,
+   "condition": "NEW"
+  },
+  {
+   "id": "3253860562",
+   "name": "Apple iPhone 16, 128GB White",
+   "url": "/pl/1-3253860562/Mobiltelefoner/Apple-iPhone-16-128GB-White-Sammenlign-Priser",
+   "categoryName": "Mobiltelefoner",
+   "lowestPrice": {
+    "amount": "6039.00",
+    "currency": "DKK"
+   },
+   "image": {
+    "id": "3215827571",
+    "url": null,
+    "path": "/product/3215827571/Apple-iPhone-16-128GB-White.jpg",
+    "description": "Apple iPhone 16, 128GB White"
+   },
+   "outOfStock": false,
+   "condition": "NEW"
+  },
+  {
+   "id": "3331957792",
+   "name": "Apple iPhone 16, 128GB Ultramarine",
+   "url": "/pl/1-3331957792/Mobiltelefoner/Apple-iPhone-16-128GB-Ultramarine-Sammenlign-Priser",
+   "categoryName": "Mobiltelefoner",
+   "lowestPrice": {
+    "amount": "6037.00",
+    "currency": "DKK"
+   },
+   "image": {
+    "id": "3136271184",
+    "url": null,
+    "path": "/product/3136271184/Apple-iPhone-16-128GB-Ultramarine.jpg",
+    "description": "Apple iPhone 16, 128GB Ultramarine"
+   },
+   "outOfStock": false,
+   "condition": "NEW"
+  }
+ ],
+ "suggestions": [
+  {
+   "name": "Apple iPhone 16",
+   "url": "/cl/1/Mobiltelefoner?attr_60501678=100018036",
+   "category": null,
+   "type": "FEATURE"
+  },
+  {
+   "name": "Mobilcovers Apple iPhone 16 Pro",
+   "url": "/cl/199/Mobiltilbehoer?attr_57209896=60035523&attr_60509704=100018033",
+   "category": {
+    "id": "cl199",
+    "name": "Mobiltilbehør",
+    "url": "/cl/199/Mobiltilbehoer"
+   },
+   "type": "FEATURE"
+  }
+ ]
+}

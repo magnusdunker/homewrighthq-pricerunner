@@ -1,0 +1,26 @@
+{
+  "title": "Pricerunner",
+  "steps": {
+    "user": { "title": "Pricerunner", "description": "Pick the country and paste links to the products you want to keep an eye on. You can also search for a product by name." },
+    "pick": { "title": "Pick products", "description": "Pick the products you want to follow." },
+    "init": { "title": "Products", "description": "Remove products, or add new ones with a link or a search." }
+  },
+  "fields": { "site": "Country", "links": "Links", "search": "Search", "found": "Products found", "keep": "Products" },
+  "hints": {
+    "links": "Links to products on Pricerunner, one per line. Copy the address from the product's page.",
+    "search": "Or search for a product by name.",
+    "keep": "Untick a product to stop following it."
+  },
+  "values": {
+    "site": { "dk": "Denmark (pricerunner.dk)", "se": "Sweden (pricerunner.se)", "uk": "United Kingdom (pricerunner.com)" }
+  },
+  "errors": {
+    "cannot_connect": "Could not fetch from Pricerunner. Try again in a moment.",
+    "bad_link": "That is not a link to a product on Pricerunner. It must contain /pl/ or be a product id.",
+    "other_site": "The link is to another country's Pricerunner than the one you picked.",
+    "not_found": "Pricerunner does not have the product.",
+    "no_results": "The search found no products.",
+    "no_products": "Pick at least one product."
+  },
+  "abort": { "unknown_entry": "The entry does not exist." }
+}

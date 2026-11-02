@@ -1,0 +1,657 @@
+{
+ "filters": [],
+ "images": [
+  {
+   "id": "3202898799",
+   "path": "/product/3202898799/Apple-iPhone-16-128GB-Black.jpg",
+   "url": null,
+   "description": "Apple iPhone 16, 128GB Black",
+   "type": "ORIGINAL"
+  },
+  {
+   "id": "3216626499",
+   "path": "/product/3216626499/Apple-iPhone-16-128GB-Black.jpg",
+   "url": null,
+   "description": "Apple iPhone 16, 128GB Black",
+   "type": "ORIGINAL"
+  },
+  {
+   "id": "3216626500",
+   "path": "/product/3216626500/Apple-iPhone-16-128GB-Black.jpg",
+   "url": null,
+   "description": "Apple iPhone 16, 128GB Black",
+   "type": "ORIGINAL"
+  }
+ ],
+ "paymentOptions": [
+  {
+   "termLength": 3
+  }
+ ],
+ "merchants": {
+  "1830": {
+   "id": "1830",
+   "url": "/ri/1830/CDON-DK",
+   "name": "CDON DK",
+   "logo": {
+    "name": "CDON DK",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/ce6550ed-1f93-4ffc-b418-41de485fa8a3/404d47ba7df66aed810d1b077eae2271"
+   },
+   "countryCode": "DK",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 1,
+    "average": "1.0"
+   },
+   "labels": [
+    "VERIFIED"
+   ]
+  },
+  "102752": {
+   "id": "102752",
+   "url": "/ri/102752/NordicElectronics",
+   "name": "NordicElectronics",
+   "logo": {
+    "name": "NordicElectronics",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/9c1ef955-c89e-4349-8c35-4374b5595f64/a346be17f44f14a75ca4b08f8d708b5b"
+   },
+   "countryCode": "DK",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 16,
+    "average": "4.6"
+   },
+   "labels": [
+    "VERIFIED",
+    "SAFE_BUY"
+   ]
+  },
+  "19504": {
+   "id": "19504",
+   "url": "/ri/19504/GoBlue.dk",
+   "name": "GoBlue.dk",
+   "logo": {
+    "name": "GoBlue.dk",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/fd52e7e5-0580-4347-a712-46a0f88af578/b568ce7159905d2c30a6c7ea1454d210"
+   },
+   "countryCode": "DK",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 110,
+    "average": "4.8"
+   },
+   "labels": [
+    "VERIFIED"
+   ]
+  },
+  "19678": {
+   "id": "19678",
+   "url": "/ri/19678/Salgsbutikken.dk",
+   "name": "Salgsbutikken.dk",
+   "logo": {
+    "name": "Salgsbutikken.dk",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/216e8d91-816f-4a47-954f-7d5f20141fcb/4ea029ba02489a83d646fc6835d60297"
+   },
+   "countryCode": "DK",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 88,
+    "average": "4.8"
+   },
+   "labels": [
+    "VERIFIED",
+    "SAFE_BUY"
+   ]
+  },
+  "58986": {
+   "id": "58986",
+   "url": "/ri/58986/INphone.dk",
+   "name": "INphone.dk",
+   "logo": {
+    "name": "INphone.dk",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/466a83fc-9399-48d5-a971-bd45d2a47076/11ddfe3405fe0cc5a7e5b518fd0ca928"
+   },
+   "countryCode": "DK",
+   "internationalCountryCode": null,
+   "rating": null,
+   "labels": [
+    "VERIFIED",
+    "SAFE_BUY"
+   ]
+  },
+  "589": {
+   "id": "589",
+   "url": "/ri/589/CS-MEGASTORE",
+   "name": "CS MEGASTORE",
+   "logo": {
+    "name": "CS MEGASTORE",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/78f8d70d-73fc-411d-b7ea-584672fd31f2/32339ad4c5a89d6dbebc24902c46eb64"
+   },
+   "countryCode": "DK",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 1796,
+    "average": "4.6"
+   },
+   "labels": [
+    "VERIFIED",
+    "SAFE_BUY",
+    "KLARNA_MERCHANT"
+   ]
+  },
+  "308": {
+   "id": "308",
+   "url": "/ri/308/Bilka",
+   "name": "Bilka",
+   "logo": {
+    "name": "Bilka",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/d029824e-97c2-4614-be51-c8e13a93cba2/1814c03ba83ff1c55defc3f894d875f1"
+   },
+   "countryCode": "DK",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 42,
+    "average": "4.9"
+   },
+   "labels": [
+    "VERIFIED",
+    "SAFE_BUY",
+    "CERTIFIED",
+    "NO_FILLUP"
+   ]
+  },
+  "2957": {
+   "id": "2957",
+   "url": "/ri/2957/Proshop.dk",
+   "name": "Proshop.dk",
+   "logo": {
+    "name": "Proshop.dk",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/2022f1ea-1417-425e-9f2d-abe55427b628/3d1f3e476b4f4439614d20471de577f0"
+   },
+   "countryCode": "DK",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 1225,
+    "average": "4.7"
+   },
+   "labels": [
+    "VERIFIED",
+    "SAFE_BUY",
+    "KLARNA_MERCHANT"
+   ]
+  }
+ },
+ "offers": [
+  {
+   "id": "50cefcfc2f63bb86b6979056909a1895",
+   "url": "https://clk.klarna.com/dk/gotostore/v1/50cefcfc2f63bb86b6979056909a1895?productId=3397102161",
+   "name": "Apple iPhone 16 5G 128GB Sort",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 2,
+    "maxDays": 4
+   },
+   "shippingCost": {
+    "amount": "49.00",
+    "currency": "DKK"
+   },
+   "price": {
+    "amount": "6118.00",
+    "currency": "DKK"
+   },
+   "merchantId": "102752",
+   "labels": {
+    "propertyLabels": [
+     "CHEAPEST_OFFER"
+    ],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": null,
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "2edeb38b429a5029fe23013f353a0263",
+   "url": "https://clk.klarna.com/dk/gotostore/v1/2edeb38b429a5029fe23013f353a0263?productId=3397102161",
+   "name": "Apple iPhone 16 128GB - Black ESIM",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 1,
+    "maxDays": 3
+   },
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "DKK"
+   },
+   "price": {
+    "amount": "6169.00",
+    "currency": "DKK"
+   },
+   "merchantId": "58986",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": null,
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "d45a4c895b3539cd3a71738300d62446",
+   "url": "https://clk.klarna.com/dk/gotostore/v1/d45a4c895b3539cd3a71738300d62446?productId=3397102161",
+   "name": "Apple iPhone 16 128GB Black",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 1,
+    "maxDays": 2
+   },
+   "shippingCost": {
+    "amount": "49.00",
+    "currency": "DKK"
+   },
+   "price": {
+    "amount": "6277.00",
+    "currency": "DKK"
+   },
+   "merchantId": "19504",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": null,
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "e8c85bc3a78aef2dd8362470c5dc76f2",
+   "url": "https://clk.klarna.com/dk/gotostore/v1/e8c85bc3a78aef2dd8362470c5dc76f2?productId=3397102161",
+   "name": "Apple iPhone 16 (128GB/Black)",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 1,
+    "maxDays": 1
+   },
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "DKK"
+   },
+   "price": {
+    "amount": "6299.00",
+    "currency": "DKK"
+   },
+   "merchantId": "19678",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": null,
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "0bcb3b2ba401f2f6a22e5d622d3e8063",
+   "url": "https://clk.klarna.com/dk/gotostore/v1/0bcb3b2ba401f2f6a22e5d622d3e8063?productId=3397102161",
+   "name": "APPLE iPhone 16 128GB Sort",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 6,
+    "maxDays": 10
+   },
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "DKK"
+   },
+   "price": {
+    "amount": "6299.00",
+    "currency": "DKK"
+   },
+   "merchantId": "1830",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": null,
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "1015f39aa25ae1b22839802be0fb80bd",
+   "url": "https://clk.klarna.com/dk/gotostore/v1/1015f39aa25ae1b22839802be0fb80bd?productId=3397102161",
+   "name": "(ComputerSalg) Apple | iPhone 16 - 128 GB - Black",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 1,
+    "maxDays": 1
+   },
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "DKK"
+   },
+   "price": {
+    "amount": "6322.00",
+    "currency": "DKK"
+   },
+   "merchantId": "589",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": {
+    "price": {
+     "amount": "2107.33",
+     "currency": "DKK"
+    },
+    "termLength": 3,
+    "interval": "MONTHLY",
+    "frequency": 30,
+    "interestRate": null
+   },
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "a78b5545e6bf1b0d2f047c6ed017653b",
+   "url": "https://clk.klarna.com/dk/gotostore/v1/a78b5545e6bf1b0d2f047c6ed017653b?productId=3397102161",
+   "name": "(ComputerSalg) Apple iPhone 16 smartphone 128 GB, sort",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 1,
+    "maxDays": 1
+   },
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "DKK"
+   },
+   "price": {
+    "amount": "6322.00",
+    "currency": "DKK"
+   },
+   "merchantId": "589",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": {
+    "price": {
+     "amount": "2107.33",
+     "currency": "DKK"
+    },
+    "termLength": 3,
+    "interval": "MONTHLY",
+    "frequency": 30,
+    "interestRate": null
+   },
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "27090d31c45926d0718c5b70c54d9316",
+   "url": "https://clk.klarna.com/dk/gotostore/v1/27090d31c45926d0718c5b70c54d9316?productId=3397102161",
+   "name": "(ComputerSalg) Apple iPhone 16 smartphone 128 GB, sort",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 1,
+    "maxDays": 1
+   },
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "DKK"
+   },
+   "price": {
+    "amount": "6322.00",
+    "currency": "DKK"
+   },
+   "merchantId": "589",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": {
+    "price": {
+     "amount": "2107.33",
+     "currency": "DKK"
+    },
+    "termLength": 3,
+    "interval": "MONTHLY",
+    "frequency": 30,
+    "interestRate": null
+   },
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "a24c00d2b7a6415c53a4e26fab1f5f33",
+   "url": "https://clk.klarna.com/dk/gotostore/v1/a24c00d2b7a6415c53a4e26fab1f5f33?productId=3397102161",
+   "name": "(ComputerSalg) Apple iPhone 16 smartphone 128 GB, sort",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 1,
+    "maxDays": 1
+   },
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "DKK"
+   },
+   "price": {
+    "amount": "6322.00",
+    "currency": "DKK"
+   },
+   "merchantId": "589",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": {
+    "price": {
+     "amount": "2107.33",
+     "currency": "DKK"
+    },
+    "termLength": 3,
+    "interval": "MONTHLY",
+    "frequency": 30,
+    "interestRate": null
+   },
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "d46a1177c52540955a00e6f8168215f6",
+   "url": "https://clk.klarna.com/dk/gotostore/v1/d46a1177c52540955a00e6f8168215f6?productId=3397102161",
+   "name": "(ComputerSalg) Apple iPhone 16 smartphone 128 GB 5G, sort",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 1,
+    "maxDays": 1
+   },
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "DKK"
+   },
+   "price": {
+    "amount": "6322.00",
+    "currency": "DKK"
+   },
+   "merchantId": "589",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": {
+    "price": {
+     "amount": "2107.33",
+     "currency": "DKK"
+    },
+    "termLength": 3,
+    "interval": "MONTHLY",
+    "frequency": 30,
+    "interestRate": null
+   },
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  }
+ ],
+ "excludedOffers": [],
+ "staticOffers": [
+  {
+   "id": "424142828f37c4b43902a07098a3f31e",
+   "url": "https://clk.klarna.com/dk/gotostore/v1/424142828f37c4b43902a07098a3f31e?productId=3397102161",
+   "name": "iPhone 16 128GB - Black",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 2,
+    "maxDays": 2
+   },
+   "shippingCost": {
+    "amount": "49.00",
+    "currency": "DKK"
+   },
+   "price": {
+    "amount": "7499.00",
+    "currency": "DKK"
+   },
+   "merchantId": "308",
+   "labels": {
+    "propertyLabels": [
+     "SPONSORED"
+    ],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": null,
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "8e2e929f36e9a5760accaa638453cb22",
+   "url": "https://clk.klarna.com/dk/gotostore/v1/8e2e929f36e9a5760accaa638453cb22?productId=3397102161",
+   "name": "Apple iPhone 16 128GB - Black",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 1,
+    "maxDays": 1
+   },
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "DKK"
+   },
+   "price": {
+    "amount": "7499.00",
+    "currency": "DKK"
+   },
+   "merchantId": "2957",
+   "labels": {
+    "propertyLabels": [
+     "SPONSORED_SECOND"
+    ],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": {
+    "price": {
+     "amount": "2499.66",
+     "currency": "DKK"
+    },
+    "termLength": 3,
+    "interval": "MONTHLY",
+    "frequency": 30,
+    "interestRate": null
+   },
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  }
+ ],
+ "offersSummary": {
+  "nationalOffer": {
+   "minPrice": {
+    "amount": "6118.00",
+    "currency": "DKK"
+   },
+   "maxPrice": {
+    "amount": "8559.00",
+    "currency": "DKK"
+   },
+   "count": 32,
+   "notInStock": false,
+   "condition": "UNKNOWN"
+  },
+  "internationalOffer": {
+   "minPrice": {
+    "amount": "6554.00",
+    "currency": "DKK"
+   },
+   "maxPrice": {
+    "amount": "7569.35",
+    "currency": "DKK"
+   },
+   "count": 3,
+   "notInStock": false,
+   "condition": "NEW"
+  },
+  "minPriceInStock": {
+   "amount": "6118.00",
+   "currency": "DKK"
+  },
+  "minPriceAcrossAllOffers": {
+   "amount": "6118.00",
+   "currency": "DKK"
+  }
+ }
+}

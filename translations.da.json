@@ -1,0 +1,26 @@
+{
+  "title": "Pricerunner",
+  "steps": {
+    "user": { "title": "Pricerunner", "description": "Vælg landet, og indsæt links til de produkter, du vil holde øje med. Du kan også søge efter et produkt ved navn." },
+    "pick": { "title": "Vælg produkter", "description": "Vælg de produkter, du vil følge." },
+    "init": { "title": "Produkter", "description": "Fjern produkter, eller tilføj nye med et link eller en søgning." }
+  },
+  "fields": { "site": "Land", "links": "Links", "search": "Søg", "found": "Fundne produkter", "keep": "Produkter" },
+  "hints": {
+    "links": "Links til produkter på Pricerunner, ét pr. linje. Kopiér adressen fra produktets side.",
+    "search": "Eller søg efter et produkt ved navn.",
+    "keep": "Fjern fluebenet for at holde op med at følge et produkt."
+  },
+  "values": {
+    "site": { "dk": "Danmark (pricerunner.dk)", "se": "Sverige (pricerunner.se)", "uk": "Storbritannien (pricerunner.com)" }
+  },
+  "errors": {
+    "cannot_connect": "Kunne ikke hente fra Pricerunner. Prøv igen om lidt.",
+    "bad_link": "Det er ikke et link til et produkt på Pricerunner. Det skal indeholde /pl/ eller være et produkt-id.",
+    "other_site": "Linket er til et andet lands Pricerunner end det, du har valgt.",
+    "not_found": "Pricerunner har ikke produktet.",
+    "no_results": "Søgningen gav ingen produkter.",
+    "no_products": "Vælg mindst ét produkt."
+  },
+  "abort": { "unknown_entry": "Opsætningen findes ikke." }
+}

@@ -1,0 +1,98 @@
+{
+ "product": {
+  "id": "3607137081",
+  "path": "/pl/1-3607137081/Mobiltelefoner/Apple-iPhone-18-Pro-Max-256-GB-Bourgogne-priser",
+  "name": "Apple iPhone 18 Pro Max 256 GB Bourgogne",
+  "description": "iOS"
+ },
+ "productContextImages": null,
+ "productGroup": {
+  "members": [
+   {
+    "id": "3607137081",
+    "name": "Apple iPhone 18 Pro Max 256 GB Bourgogne",
+    "image": {
+     "id": "3415046214",
+     "path": "/product/3415046214/Apple-iPhone-18-Pro-Max-256-GB-Bourgogne.jpg",
+     "description": "Apple iPhone 18 Pro Max 256 GB Bourgogne"
+    },
+    "price": {
+     "amount": "18489.00",
+     "currency": "SEK"
+    },
+    "cheapestPricePerUnit": null,
+    "attributeValues": [
+     "Burgundy"
+    ],
+    "path": "/pl/1-3607137081/Mobiltelefoner/Apple-iPhone-18-Pro-Max-256-GB-Bourgogne-priser"
+   },
+   {
+    "id": "3607137087",
+    "name": "Apple iPhone 18 Pro Max 256 GB - Glaciär",
+    "image": {
+     "id": "3415046221",
+     "path": "/product/3415046221/Apple-iPhone-18-Pro-Max-256-GB-Glaciaer.jpg",
+     "description": "Apple iPhone 18 Pro Max 256 GB - Glaciär"
+    },
+    "price": {
+     "amount": "18439.00",
+     "currency": "SEK"
+    },
+    "cheapestPricePerUnit": null,
+    "attributeValues": [
+     "Glacier"
+    ],
+    "path": "/pl/1-3607137087/Mobiltelefoner/Apple-iPhone-18-Pro-Max-256-GB-Glaciaer-priser"
+   }
+  ],
+  "displayMode": "IMAGE",
+  "attributeValue": "Tillverkarfärg"
+ },
+ "reviewSummary": {
+  "average": 2.4,
+  "count": 964
+ },
+ "cheapestInstallment": null,
+ "brand": {
+  "id": "162",
+  "name": "Apple",
+  "logoPath": null,
+  "image": null,
+  "certifiedImage": {
+   "id": "162-409986350.png",
+   "path": "https://owp.klarna.com/images/logos/162-409986350.png",
+   "description": "Apple"
+  },
+  "labels": []
+ },
+ "category": {
+  "id": "1",
+  "name": "Mobiltelefoner",
+  "url": "/cl/1/Mobiltelefoner",
+  "filters": [
+   {
+    "type": "CATEGORY_BRAND_FILTER",
+    "brandName": "Apple",
+    "optionName": "Mobiltelefoner",
+    "url": "/cl/1/Mobiltelefoner?man_id=162"
+   }
+  ]
+ },
+ "breadCrumbs": [
+  {
+   "id": "4",
+   "name": "Mobil & Wearables",
+   "url": "/t/4/Mobil-Wearables"
+  },
+  {
+   "id": "1",
+   "name": "Mobiltelefoner",
+   "url": "/cl/1/Mobiltelefoner"
+  }
+ ],
+ "commonData": null,
+ "redirect": null,
+ "productRanks": null,
+ "specifications": null,
+ "classification": "ONE"
+}

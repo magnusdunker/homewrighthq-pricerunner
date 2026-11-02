@@ -1,0 +1,477 @@
+{
+ "filters": [],
+ "images": [
+  {
+   "id": "3415046214",
+   "path": "/product/3415046214/Apple-iPhone-18-Pro-Max-256-GB-Bourgogne.jpg",
+   "url": null,
+   "description": "Apple iPhone 18 Pro Max 256 GB Bourgogne",
+   "type": "ORIGINAL"
+  }
+ ],
+ "paymentOptions": [
+  {
+   "termLength": 6
+  },
+  {
+   "termLength": 3
+  }
+ ],
+ "merchants": {
+  "46828": {
+   "id": "46828",
+   "url": "/ri/46828/Telefonshoppen",
+   "name": "Telefonshoppen",
+   "logo": {
+    "name": "Telefonshoppen",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/071e1271-7bfb-452f-a461-d066b9af06fe/d79bf403b3fd2f9f6e76223474a6eebd"
+   },
+   "countryCode": "SE",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 15,
+    "average": "4.9"
+   },
+   "labels": [
+    "VERIFIED",
+    "SAFE_BUY",
+    "KLARNA_MERCHANT"
+   ]
+  },
+  "2899": {
+   "id": "2899",
+   "url": "/ri/2899/Inet",
+   "name": "Inet",
+   "logo": {
+    "name": "Inet",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/5aae1fb7-5478-423a-a83a-a69863f4264e/960982f310272a3485263b1f9aecffd6"
+   },
+   "countryCode": "SE",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 925,
+    "average": "4.9"
+   },
+   "labels": [
+    "VERIFIED"
+   ]
+  },
+  "551": {
+   "id": "551",
+   "url": "/ri/551/Komplett",
+   "name": "Komplett",
+   "logo": {
+    "name": "Komplett",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/4baa8553-4b96-490a-9130-6e9258182f74/100234ee7b538dd135ac78d4e579fcee"
+   },
+   "countryCode": "SE",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 4,
+    "average": "0.0"
+   },
+   "labels": [
+    "VERIFIED"
+   ]
+  },
+  "2": {
+   "id": "2",
+   "url": "/ri/2/NetOnNet",
+   "name": "NetOnNet",
+   "logo": {
+    "name": "NetOnNet",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/2b840307-4fba-4025-98a6-97cf27a4a211/b51eaac7f000d51df3b8197cc5c58ddc"
+   },
+   "countryCode": "SE",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 44,
+    "average": "2.3"
+   },
+   "labels": [
+    "VERIFIED"
+   ]
+  },
+  "86787": {
+   "id": "86787",
+   "url": "/ri/86787/POWER",
+   "name": "POWER",
+   "logo": {
+    "name": "POWER",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/81d0ed9c-3d0e-4c5a-a0f4-1ef9bf1e9072/1f8d0727f3fc2742ce5102d37a90999a"
+   },
+   "countryCode": "SE",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 32,
+    "average": "3.9"
+   },
+   "labels": [
+    "VERIFIED",
+    "KLARNA_MERCHANT"
+   ]
+  },
+  "4797": {
+   "id": "4797",
+   "url": "/ri/4797/Elgiganten",
+   "name": "Elgiganten",
+   "logo": {
+    "name": "Elgiganten",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/70ad2c81-173e-4ae9-a49f-e88bd0d4194d/7fb608f07aca7f3bb9f0537a52dc2624"
+   },
+   "countryCode": "SE",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 4468,
+    "average": "4.2"
+   },
+   "labels": [
+    "VERIFIED",
+    "KLARNA_MERCHANT"
+   ]
+  },
+  "108": {
+   "id": "108",
+   "url": "/ri/108/elon.se",
+   "name": "elon.se",
+   "logo": {
+    "name": "elon.se",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/d7ad3a66-b97c-4c59-8c4b-f355ed4383c0/8325844737e0e024265b4dab3b15ccc4"
+   },
+   "countryCode": "SE",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 1272,
+    "average": "4.7"
+   },
+   "labels": [
+    "VERIFIED"
+   ]
+  },
+  "50": {
+   "id": "50",
+   "url": "/ri/50/Scandinavian-Photo",
+   "name": "Scandinavian Photo",
+   "logo": {
+    "name": "Scandinavian Photo",
+    "url": "https://assets.klarnacdn.net/rs:fit:300:300:1:1/bg:255:255:255/image/92604602-40a9-47e9-bb21-1bed89529857/59003d45c7533e189ab8066f3d16150e"
+   },
+   "countryCode": "SE",
+   "internationalCountryCode": null,
+   "rating": {
+    "count": 9,
+    "average": "1.0"
+   },
+   "labels": [
+    "VERIFIED",
+    "SAFE_BUY"
+   ]
+  }
+ },
+ "offers": [
+  {
+   "id": "1ea98cffc98a4ae20b50c2dbbc3bcb0f",
+   "url": "https://clk.klarna.com/se/gotostore/v1/1ea98cffc98a4ae20b50c2dbbc3bcb0f?productId=3607137081",
+   "name": "iPhone 18 Pro Max 256GB (burgundy)",
+   "stockStatus": "BACKORDER",
+   "availability": "AVAILABLE",
+   "deliveryTime": null,
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "SEK"
+   },
+   "price": {
+    "amount": "18489.00",
+    "currency": "SEK"
+   },
+   "merchantId": "551",
+   "labels": {
+    "propertyLabels": [
+     "CHEAPEST_OFFER"
+    ],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": null,
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "64d57ec87538363cd9d2181e9d326469",
+   "url": "https://clk.klarna.com/se/gotostore/v1/64d57ec87538363cd9d2181e9d326469?productId=3607137081",
+   "name": "Apple iPhone 18 Pro Max 256 GB, bourgogne",
+   "stockStatus": "BACKORDER",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 5,
+    "maxDays": 10
+   },
+   "shippingCost": {
+    "amount": "29.00",
+    "currency": "SEK"
+   },
+   "price": {
+    "amount": "18489.00",
+    "currency": "SEK"
+   },
+   "merchantId": "86787",
+   "labels": {
+    "propertyLabels": [
+     "CHEAPEST_OFFER"
+    ],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": {
+    "price": {
+     "amount": "3263.43",
+     "currency": "SEK"
+    },
+    "termLength": 6,
+    "interval": "MONTHLY",
+    "frequency": null,
+    "interestRate": 21.9
+   },
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "637909324d433d230eafd0805ea3a26d",
+   "url": "https://clk.klarna.com/se/gotostore/v1/637909324d433d230eafd0805ea3a26d?productId=3607137081",
+   "name": "Apple iPhone 18 Pro Max 256 GB - Burgundy",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 2,
+    "maxDays": 5
+   },
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "SEK"
+   },
+   "price": {
+    "amount": "18490.00",
+    "currency": "SEK"
+   },
+   "merchantId": "108",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": null,
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "0635dad45e3a89770927451400526666",
+   "url": "https://clk.klarna.com/se/gotostore/v1/0635dad45e3a89770927451400526666?productId=3607137081",
+   "name": "Apple iPhone 18 Pro Max (256GB) Bourgogne",
+   "stockStatus": "BACKORDER",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 0,
+    "maxDays": 1
+   },
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "SEK"
+   },
+   "price": {
+    "amount": "18490.00",
+    "currency": "SEK"
+   },
+   "merchantId": "2899",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": null,
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "afbda8d57c624cfbf134a2018364ec01",
+   "url": "https://clk.klarna.com/se/gotostore/v1/afbda8d57c624cfbf134a2018364ec01?productId=3607137081",
+   "name": "Apple iPhone 18 Pro Max smarttelefon 256GB (burgundy)",
+   "stockStatus": "BACKORDER",
+   "availability": "AVAILABLE",
+   "deliveryTime": null,
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "SEK"
+   },
+   "price": {
+    "amount": "18490.00",
+    "currency": "SEK"
+   },
+   "merchantId": "4797",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": null,
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "d604f5150ac4e5497a82ff1d0c8117cc",
+   "url": "https://clk.klarna.com/se/gotostore/v1/d604f5150ac4e5497a82ff1d0c8117cc?productId=3607137081",
+   "name": "iPhone 18 Pro Max 256GB Burgundy",
+   "stockStatus": "BACKORDER",
+   "availability": "AVAILABLE",
+   "deliveryTime": null,
+   "shippingCost": {
+    "amount": "0.00",
+    "currency": "SEK"
+   },
+   "price": {
+    "amount": "18490.00",
+    "currency": "SEK"
+   },
+   "merchantId": "50",
+   "labels": {
+    "propertyLabels": [],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": null,
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  }
+ ],
+ "excludedOffers": [],
+ "staticOffers": [
+  {
+   "id": "396950cfafdd7035db4aa96b8f405650",
+   "url": "https://clk.klarna.com/se/gotostore/v1/396950cfafdd7035db4aa96b8f405650?productId=3607137081",
+   "name": "iPhone 18 Pro Max 5G 256GB - Bourgogne",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 1,
+    "maxDays": 3
+   },
+   "shippingCost": {
+    "amount": "29.00",
+    "currency": "SEK"
+   },
+   "price": {
+    "amount": "20495.00",
+    "currency": "SEK"
+   },
+   "merchantId": "46828",
+   "labels": {
+    "propertyLabels": [
+     "SPONSORED_SECOND"
+    ],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": {
+    "price": {
+     "amount": "7060.27",
+     "currency": "SEK"
+    },
+    "termLength": 3,
+    "interval": "MONTHLY",
+    "frequency": null,
+    "interestRate": 21.9
+   },
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  },
+  {
+   "id": "cd605ea6c6a15beeaccb1e72a411ecb8",
+   "url": "https://clk.klarna.com/se/gotostore/v1/cd605ea6c6a15beeaccb1e72a411ecb8?productId=3607137081",
+   "name": "Apple iPhone 18 Pro Max 256GB Burgundy",
+   "stockStatus": "IN_STOCK",
+   "availability": "AVAILABLE",
+   "deliveryTime": {
+    "minDays": 3,
+    "maxDays": 4
+   },
+   "shippingCost": {
+    "amount": "39.00",
+    "currency": "SEK"
+   },
+   "price": {
+    "amount": "18490.00",
+    "currency": "SEK"
+   },
+   "merchantId": "2",
+   "labels": {
+    "propertyLabels": [
+     "SPONSORED"
+    ],
+    "attributeLabels": []
+   },
+   "pricePerUnit": null,
+   "installment": null,
+   "campaignPrice": null,
+   "campaignMembership": null,
+   "productRawUrl": null,
+   "merchantProductSku": null,
+   "oneClickPurchase": null
+  }
+ ],
+ "offersSummary": {
+  "nationalOffer": {
+   "minPrice": {
+    "amount": "18489.00",
+    "currency": "SEK"
+   },
+   "maxPrice": {
+    "amount": "21805.00",
+    "currency": "SEK"
+   },
+   "count": 17,
+   "notInStock": false,
+   "condition": "NEW"
+  },
+  "internationalOffer": {
+   "minPrice": {
+    "amount": "19641.00",
+    "currency": "SEK"
+   },
+   "maxPrice": {
+    "amount": "19641.00",
+    "currency": "SEK"
+   },
+   "count": 1,
+   "notInStock": false,
+   "condition": "UNKNOWN"
+  },
+  "minPriceInStock": {
+   "amount": "18489.00",
+   "currency": "SEK"
+  },
+  "minPriceAcrossAllOffers": {
+   "amount": "18489.00",
+   "currency": "SEK"
+  }
+ }
+}

@@ -1,0 +1,98 @@
+{
+ "product": {
+  "id": "3397102161",
+  "path": "/pl/1-3397102161/Mobiltelefoner/Apple-iPhone-16-128GB-Black-Sammenlign-Priser",
+  "name": "Apple iPhone 16, 128GB Black",
+  "description": "Apple iPhone 16, 128 GB Sort med en 6,1\"-OLED-skærm og 48 MP kamera. Den har hurtig opladning og er vandafvisende – velegnet til dine daglige behov."
+ },
+ "productContextImages": null,
+ "productGroup": {
+  "members": [
+   {
+    "id": "3397102161",
+    "name": "Apple iPhone 16, 128GB Black",
+    "image": {
+     "id": "3202898799",
+     "path": "/product/3202898799/Apple-iPhone-16-128GB-Black.jpg",
+     "description": "Apple iPhone 16, 128GB Black"
+    },
+    "price": {
+     "amount": "6118.00",
+     "currency": "DKK"
+    },
+    "cheapestPricePerUnit": null,
+    "attributeValues": [
+     "Black"
+    ],
+    "path": "/pl/1-3397102161/Mobiltelefoner/Apple-iPhone-16-128GB-Black-Sammenlign-Priser"
+   },
+   {
+    "id": "3397812466",
+    "name": "Apple iPhone 16, 128GB Pink",
+    "image": {
+     "id": "3216626451",
+     "path": "/product/3216626451/Apple-iPhone-16-128GB-Pink.jpg",
+     "description": "Apple iPhone 16, 128GB Pink"
+    },
+    "price": {
+     "amount": "5545.00",
+     "currency": "DKK"
+    },
+    "cheapestPricePerUnit": null,
+    "attributeValues": [
+     "Pink"
+    ],
+    "path": "/pl/1-3397812466/Mobiltelefoner/Apple-iPhone-16-128GB-Pink-Sammenlign-Priser"
+   }
+  ],
+  "displayMode": "IMAGE",
+  "attributeValue": "Producent farve"
+ },
+ "reviewSummary": {
+  "average": 4.15,
+  "count": 2781
+ },
+ "cheapestInstallment": null,
+ "brand": {
+  "id": "162",
+  "name": "Apple",
+  "logoPath": null,
+  "image": null,
+  "certifiedImage": {
+   "id": "162-409986350.png",
+   "path": "https://owp.klarna.com/images/logos/162-409986350.png",
+   "description": "Apple"
+  },
+  "labels": []
+ },
+ "category": {
+  "id": "1",
+  "name": "Mobiltelefoner",
+  "url": "/cl/1/Mobiltelefoner",
+  "filters": [
+   {
+    "type": "CATEGORY_BRAND_FILTER",
+    "brandName": "Apple",
+    "optionName": "Mobiltelefoner",
+    "url": "/cl/1/Mobiltelefoner?man_id=162"
+   }
+  ]
+ },
+ "breadCrumbs": [
+  {
+   "id": "4",
+   "name": "Telefoni & Wearables",
+   "url": "/t/4/Telefoni-Wearables"
+  },
+  {
+   "id": "1",
+   "name": "Mobiltelefoner",
+   "url": "/cl/1/Mobiltelefoner"
+  }
+ ],
+ "commonData": null,
+ "redirect": null,
+ "productRanks": null,
+ "specifications": null,
+ "classification": "ONE"
+}
