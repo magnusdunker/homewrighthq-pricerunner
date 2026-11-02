@@ -60,7 +60,7 @@ After the products, the integration asks for a price alert: a maximum price per 
 
 When the lowest price is at or below the maximum, one message is sent, e.g. "Apple iPhone 16, 128GB Black koster 6118 DKK hos NordicElectronics. Din grænse er 6500 DKK." It can go as:
 
-- **Push-besked** (push notification): `notify.web_push` to the phones and browsers with push turned on. Pick people under **Push til** to send only to their devices; empty means everyone. Tapping the message opens the product's page on Pricerunner.
+- **Push-besked** (push notification): `notify.web_push` to the phones and browsers with push turned on. Under **Push til enheder** you can name devices, one per line, as they are listed under Profil → Push-beskeder (e.g. Magnus Telefon). Under **Push til personer** you can pick people, which sends to the devices of each person's user. With neither, the message goes to everyone with push turned on. Tapping the message opens the product's page on Pricerunner.
 - **Notifikation i brugerfladen** (notification in the interface): `persistent_notification.create`, with a link to the product's page.
 - **Alle beskedtjenester** (all message services): `notify.notify`.
 - **En anden tjeneste** (another service): a `notify` service you type in, e.g. `notify.telegram`.
