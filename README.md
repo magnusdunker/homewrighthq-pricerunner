@@ -54,7 +54,20 @@ There is no entity for the price in one particular shop. `shop_prices` has it:
 {{ state_attr('sensor.apple_iphone_16_128gb_black_laveste_pris', 'shop_prices')['Elgiganten'] }}
 ```
 
-A message when the price drops below 6,000 kr.:
+## Price alerts
+
+After the products, the integration asks for a price alert: a maximum price per product, and where the message goes. The same step comes after the products under the integration's options, so the alerts can be changed later. A product with an empty field gets no message.
+
+When the lowest price is at or below the maximum, one message is sent, e.g. "Apple iPhone 16, 128GB Black koster 6118 DKK hos NordicElectronics. Din grænse er 6500 DKK." It can go as:
+
+- **Push-besked** (push notification): `notify.web_push` to the phones and browsers with push turned on. Pick people under **Push til** to send only to their devices; empty means everyone. Tapping the message opens the product's page on Pricerunner.
+- **Notifikation i brugerfladen** (notification in the interface): `persistent_notification.create`, with a link to the product's page.
+- **Alle beskedtjenester** (all message services): `notify.notify`.
+- **En anden tjeneste** (another service): a `notify` service you type in, e.g. `notify.telegram`.
+
+A message is sent once. The integration remembers it in `alerts.json` in its data folder, so updates and restarts do not send it again. When the price goes above the maximum, or the maximum is changed, the next price at or below it sends a new message. A product sold out everywhere changes nothing.
+
+For other conditions, an automation on the price sensor works too. A message when the price drops below 6,000 kr.:
 
 ```yaml
 triggers:
@@ -93,6 +106,7 @@ Built in Rust on the `thehome-plugin` SDK from [homewright-example-integration-r
 
 - `src/api.rs`: the sites, the links and the JSON from Pricerunner
 - `src/lib.rs`: the flows, the setup, the update and the connection to HomewrightHQ
+- `src/alerts.rs`: the price alerts: the form, the settings and the messages
 - `tests/`: tests against real responses from Pricerunner in `tests/fixtures` (fetched 2026-11-02 and trimmed: fewer offers, merchants and filters, no product texts), against a fake Pricerunner and with a fake HomewrightHQ in `tests/host`
 
 ```

@@ -3,16 +3,20 @@
   "steps": {
     "user": { "title": "Pricerunner", "description": "Vælg landet, og indsæt links til de produkter, du vil holde øje med. Du kan også søge efter et produkt ved navn." },
     "pick": { "title": "Vælg produkter", "description": "Vælg de produkter, du vil følge." },
-    "init": { "title": "Produkter", "description": "Fjern produkter, eller tilføj nye med et link eller en søgning." }
+    "init": { "title": "Produkter", "description": "Fjern produkter, eller tilføj nye med et link eller en søgning." },
+    "alerts": { "title": "Prisalarm", "description": "Skriv den højeste pris, du vil give for et produkt. Når den laveste pris er på eller under, får du én besked. Lad feltet stå tomt for ingen besked." }
   },
-  "fields": { "site": "Land", "links": "Links", "search": "Søg", "found": "Fundne produkter", "keep": "Produkter" },
+  "fields": { "site": "Land", "links": "Links", "search": "Søg", "found": "Fundne produkter", "keep": "Produkter", "notify": "Besked med", "notify_people": "Push til", "notify_service": "Anden tjeneste" },
   "hints": {
     "links": "Links til produkter på Pricerunner, ét pr. linje. Kopiér adressen fra produktets side.",
     "search": "Eller søg efter et produkt ved navn.",
-    "keep": "Fjern fluebenet for at holde op med at følge et produkt."
+    "keep": "Fjern fluebenet for at holde op med at følge et produkt.",
+    "notify_people": "Tom betyder alle med push slået til.",
+    "notify_service": "Fx notify.telegram. Bruges, når \"En anden tjeneste\" er valgt."
   },
   "values": {
-    "site": { "dk": "Danmark (pricerunner.dk)", "se": "Sverige (pricerunner.se)", "uk": "Storbritannien (pricerunner.com)" }
+    "site": { "dk": "Danmark (pricerunner.dk)", "se": "Sverige (pricerunner.se)", "uk": "Storbritannien (pricerunner.com)" },
+    "notify": { "web_push": "Push-besked", "persistent_notification": "Notifikation i brugerfladen", "all": "Alle beskedtjenester (notify.notify)", "other": "En anden tjeneste" }
   },
   "errors": {
     "cannot_connect": "Kunne ikke hente fra Pricerunner. Prøv igen om lidt.",
@@ -20,7 +24,9 @@
     "other_site": "Linket er til et andet lands Pricerunner end det, du har valgt.",
     "not_found": "Pricerunner har ikke produktet.",
     "no_results": "Søgningen gav ingen produkter.",
-    "no_products": "Vælg mindst ét produkt."
+    "no_products": "Vælg mindst ét produkt.",
+    "bad_price": "Skriv en pris som et tal, fx 5999.",
+    "bad_service": "Skriv navnet på en notify-tjeneste, fx notify.telegram."
   },
   "abort": { "unknown_entry": "Opsætningen findes ikke." }
 }

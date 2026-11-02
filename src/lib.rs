@@ -4,12 +4,14 @@
 //! pages, and this file connects it to HomewrightHQ through the
 //! `thehome-plugin` SDK.
 
+pub mod alerts;
 pub mod api;
 
 use std::collections::HashMap;
 use std::sync::Mutex;
 use std::time::Duration;
 
+use alerts::{Alerts, Sent};
 use api::{Found, LinkError, Prices, Product, Site};
 use thehome_plugin::{async_trait, json, Entity, Entry, Error, Flow, FlowReply, Host, Integration, Map, Value};
 
@@ -144,6 +146,34 @@ fn keep_input(mut schema: Value, input: &Value) -> Value {
         }
     }
     schema
+}
+
+/// The price alert step, with the site and products kept in the flow.
+fn alerts_form(flow: &Flow, site: &Site, list: &[Product], current: &Alerts, errors: Option<Value>, input: Option<&Value>) -> FlowReply {
+    let mut schema = alerts::schema(list, current, site.currency);
+    if let Some(i) = input {
+        schema = alerts::keep_input(schema, i);
+    }
+    let mut data = flow.data.clone();
+    data.insert("site".into(), json!(site.key));
+    data.insert("products".into(), products_json(list));
+    form_with("alerts", schema, None, errors).with_data(data)
+}
+
+/// The alert step: the settings, or the form again.
+fn alerts_step(flow: &Flow, site: &Site, current: &Alerts, input: Option<Value>) -> Result<(Vec<Product>, Alerts), Box<FlowReply>> {
+    let list = product_list(flow.data.get("products"));
+    match input {
+        Some(v) => alerts::from_input(&list, &v).map(|a| (list.clone(), a)).map_err(|e| Box::new(alerts_form(flow, site, &list, current, Some(e), Some(&v)))),
+        None => Err(Box::new(alerts_form(flow, site, &list, current, None, None))),
+    }
+}
+
+fn with_alerts(mut data: Value, a: &Alerts) -> Value {
+    if let Some(m) = data.as_object_mut() {
+        m.extend(a.to_json());
+    }
+    data
 }
 
 fn client() -> Result<reqwest::Client, Error> {
@@ -335,21 +365,36 @@ fn entry_site(entry: &Entry) -> &'static Site {
 #[async_trait]
 impl Integration for Pricerunner {
     async fn config_flow(&self, _host: &Host, flow: Flow, step: &str, input: Option<Value>) -> Result<FlowReply, Error> {
+        if step == "alerts" {
+            let site = flow.data.get("site").and_then(Value::as_str).and_then(api::site).unwrap_or(&api::SITES[0]);
+            return Ok(match alerts_step(&flow, site, &Alerts::default(), input) {
+                Err(form) => *form,
+                Ok((list, a)) => {
+                    let title = format!("Pricerunner {}", site.host.trim_start_matches("www."));
+                    FlowReply::create(&title, with_alerts(json!({ "site": site.key, "products": products_json(&list) }), &a))
+                }
+            });
+        }
         match self.pick(&flow, step, input, None).await? {
             Err(form) => Ok(form),
-            Ok((site, list)) => {
-                let title = format!("Pricerunner {}", site.host.trim_start_matches("www."));
-                Ok(FlowReply::create(&title, json!({ "site": site.key, "products": products_json(&list) })))
-            }
+            Ok((site, list)) => Ok(alerts_form(&flow, site, &list, &Alerts::default(), None, None)),
         }
     }
 
     async fn options_flow(&self, _host: &Host, flow: Flow, step: &str, input: Option<Value>) -> Result<FlowReply, Error> {
         let Some(entry) = flow.entry.clone() else { return Ok(FlowReply::abort("unknown_entry")) };
         let current = product_list(entry.get("products"));
-        match self.pick(&flow, step, input, Some((entry_site(&entry), &current))).await? {
+        let site = entry_site(&entry);
+        let set = Alerts::from_entry(&entry);
+        if step == "alerts" {
+            return Ok(match alerts_step(&flow, site, &set, input) {
+                Err(form) => *form,
+                Ok((list, a)) => FlowReply::create("", with_alerts(json!({ "products": products_json(&list) }), &a)),
+            });
+        }
+        match self.pick(&flow, step, input, Some((site, &current))).await? {
             Err(form) => Ok(form),
-            Ok((_, list)) => Ok(FlowReply::create("", json!({ "products": products_json(&list) }))),
+            Ok((_, list)) => Ok(alerts_form(&flow, site, &list, &set, None, None)),
         }
     }
 
@@ -360,6 +405,9 @@ impl Integration for Pricerunner {
         if products.is_empty() {
             return Err(Error::failed("ingen produkter"));
         }
+        let alerts = Alerts::from_entry(&entry).keep(&products);
+        let sent = Sent::new(&host.data_dir());
+        sent.retain(&entry_id, &alerts);
         let client = client()?;
         // the first fetch here, so a setup without a connection is retried
         let mut first = vec![];
@@ -401,7 +449,10 @@ impl Integration for Pricerunner {
         }
         for (w, r) in watched.iter_mut().zip(first) {
             match r {
-                Ok(p) => w.show(host, site, &p).await,
+                Ok(p) => {
+                    w.show(host, site, &p).await;
+                    alerts::check(host, &sent, &alerts, &entry_id, &w.product, &w.url, p.cheapest()).await;
+                }
                 Err(e) => {
                     warn!("{}: {e}", w.product.name);
                     w.failures = 1;
@@ -411,6 +462,7 @@ impl Integration for Pricerunner {
 
         let host = host.clone();
         let this = self.copy();
+        let id = entry_id.clone();
         let task = tokio::spawn(async move {
             loop {
                 tokio::time::sleep(this.poll).await;
@@ -422,6 +474,7 @@ impl Integration for Pricerunner {
                         Ok(p) => {
                             w.failures = 0;
                             w.show(&host, site, &p).await;
+                            alerts::check(&host, &sent, &alerts, &id, &w.product, &w.url, p.cheapest()).await;
                         }
                         Err(e) => {
                             w.failures += 1;

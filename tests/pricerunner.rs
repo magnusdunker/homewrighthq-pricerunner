@@ -194,6 +194,12 @@ async fn config_flow_with_links() {
     // the same product twice, as a link and as an id
     let links = format!("https://www.pricerunner.dk/pl/1-{IPHONE}/Mobiltelefoner/Apple-iPhone-16-128GB-Black-Sammenlign-Priser\n{IPHONE}");
     let r = host.call("config_flow", user(json!({ "site": "dk", "links": links }))).await.unwrap();
+    // then the price alerts, which can be left empty
+    assert_eq!(r["result"]["step_id"], "alerts", "{r}");
+    let props = &r["result"]["schema"]["properties"];
+    assert_eq!(props[format!("max_{IPHONE}")]["title"], "Apple iPhone 16, 128GB Black (DKK)");
+    assert_eq!(props["notify"]["default"], "web_push");
+    let r = host.call("config_flow", alerts(r["data"].clone(), json!({}))).await.unwrap();
     assert_eq!(r["result"]["type"], "create_entry", "{r}");
     assert_eq!(r["result"]["title"], "Pricerunner pricerunner.dk");
     let data = &r["result"]["data"];
@@ -201,6 +207,39 @@ async fn config_flow_with_links() {
     assert_eq!(data["products"].as_array().unwrap().len(), 1);
     assert_eq!(data["products"][0]["name"], "Apple iPhone 16, 128GB Black");
     assert_eq!(data["products"][0]["brand"], "Apple");
+    assert_eq!(data["max_prices"], json!({}));
+    assert_eq!(data["notify"], "web_push");
+}
+
+fn alerts(data: Value, input: Value) -> Value {
+    json!({ "flow": flow(data), "step": "alerts", "input": input })
+}
+
+#[tokio::test]
+async fn config_flow_alert_settings() {
+    let server = MockServer::start().await;
+    pricerunner(&server).await;
+    let host = start(&server).await;
+    let r = host.call("config_flow", user(json!({ "site": "dk", "links": IPHONE }))).await.unwrap();
+    let data = r["data"].clone();
+    let max = format!("max_{IPHONE}");
+
+    // a price that is no number, and another service without a name
+    let r = host.call("config_flow", alerts(data.clone(), json!({ max.clone(): "billig", "notify": "other", "notify_service": "" }))).await.unwrap();
+    assert_eq!(r["result"]["step_id"], "alerts");
+    assert_eq!(r["result"]["errors"], json!({ max.clone(): "bad_price", "notify_service": "bad_service" }));
+    assert_eq!(r["result"]["schema"]["properties"]["notify"]["default"], "other");
+
+    let r = host.call("config_flow", alerts(data.clone(), json!({ max.clone(): "5 999,50", "notify": "other", "notify_service": "telegram" }))).await.unwrap();
+    let d = &r["result"]["data"];
+    assert_eq!(d["max_prices"], json!({ IPHONE: 5999.5 }));
+    assert_eq!(d["notify"], "notify.telegram");
+
+    let r = host.call("config_flow", alerts(data.clone(), json!({ max.clone(): 6000, "notify": "web_push", "notify_people": ["person.magnus"] }))).await.unwrap();
+    let d = &r["result"]["data"];
+    assert_eq!((d["notify"].clone(), d["notify_people"].clone()), (json!("web_push"), json!(["person.magnus"])));
+    let r = host.call("config_flow", alerts(data, json!({ "notify": "all" }))).await.unwrap();
+    assert_eq!(r["result"]["data"]["notify"], "notify.notify");
 }
 
 #[tokio::test]
@@ -225,6 +264,8 @@ async fn config_flow_with_search() {
     assert_eq!(r["result"]["schema"]["properties"]["found"]["items"]["oneOf"].as_array().unwrap().len(), 5);
 
     let r = host.call("config_flow", pick(json!([IPHONE, "3406824728"]))).await.unwrap();
+    assert_eq!(r["result"]["step_id"], "alerts");
+    let r = host.call("config_flow", alerts(r["data"].clone(), json!({}))).await.unwrap();
     assert_eq!(r["result"]["type"], "create_entry");
     let names: Vec<&str> = r["result"]["data"]["products"].as_array().unwrap().iter().map(|p| p["name"].as_str().unwrap()).collect();
     assert_eq!(names, ["Apple iPhone 16e, 128GB Black", "Apple iPhone 16, 128GB Black"]);
@@ -260,12 +301,27 @@ async fn options_flow_removes_and_adds() {
     let r = host.call("options_flow", options("init", json!({ "keep": [] }))).await.unwrap();
     assert_eq!(r["result"]["errors"], json!({ "base": "no_products" }));
 
+    // the alert step after the products, filled from the entry
+    let alert = |data: Value, input: Value| {
+        let mut e = entry(json!([iphone(), gone()]));
+        e["options"] = json!({ "max_prices": { IPHONE: 6000.0, "1999999999": 10.0 }, "notify": "persistent_notification" });
+        json!({ "flow": { "flow_id": "o1", "source": "options", "data": data, "entry": e }, "step": "alerts", "input": input })
+    };
     let r = host.call("options_flow", options("init", json!({ "keep": [IPHONE] }))).await.unwrap();
+    assert_eq!(r["result"]["step_id"], "alerts");
+    let r = host.call("options_flow", alert(r["data"].clone(), Value::Null)).await.unwrap();
+    let props = &r["result"]["schema"]["properties"];
+    assert_eq!(props[format!("max_{IPHONE}")]["default"], 6000.0);
+    assert!(props.get("max_1999999999").is_none());
+    assert_eq!(props["notify"]["default"], "persistent_notification");
+    let r = host.call("options_flow", alert(r["data"].clone(), json!({ format!("max_{IPHONE}"): 5500, "notify": "persistent_notification" }))).await.unwrap();
     assert_eq!(r["result"]["type"], "create_entry");
     assert_eq!(r["result"]["data"]["products"].as_array().unwrap().len(), 1);
+    assert_eq!(r["result"]["data"]["max_prices"], json!({ IPHONE: 5500.0 }));
 
     // without the field nothing is removed
     let r = host.call("options_flow", options("init", json!({ "links": IPHONE }))).await.unwrap();
+    let r = host.call("options_flow", alert(r["data"].clone(), json!({}))).await.unwrap();
     assert_eq!(r["result"]["data"]["products"].as_array().unwrap().len(), 2);
 
     // search from the options too, keeping the product that is there
@@ -276,6 +332,7 @@ async fn options_flow_removes_and_adds() {
         .call("options_flow", json!({ "flow": { "flow_id": "o1", "source": "options", "data": data, "entry": entry(json!([iphone()])) }, "step": "pick", "input": { "found": ["3331957792"] } }))
         .await
         .unwrap();
+    let r = host.call("options_flow", alert(r["data"].clone(), json!({}))).await.unwrap();
     let ids: Vec<&str> = r["result"]["data"]["products"].as_array().unwrap().iter().map(|p| p["id"].as_str().unwrap()).collect();
     assert_eq!(ids, [IPHONE, "3331957792"]);
 }
@@ -375,6 +432,55 @@ async fn unavailable_and_back() {
     assert_eq!(state, "unknown");
     assert_eq!(a["offers"], 0);
     assert_eq!(host.state("sensor.e1_3397102161_shop").unwrap().0, "unknown");
+}
+
+fn with_alert(max: f64, notify: Value) -> Value {
+    let mut e = entry(json!([iphone()]));
+    e["options"] = json!({ "max_prices": { IPHONE: max } });
+    e["options"].as_object_mut().unwrap().extend(notify.as_object().unwrap().clone());
+    e
+}
+
+#[tokio::test]
+async fn a_price_alert_is_sent_once() {
+    let server = MockServer::start().await;
+    pricerunner(&server).await;
+    let host = start(&server).await;
+    let calls = || host.rec.lock().unwrap().calls.clone();
+
+    // 6118 kr. is under 6500: one push to the person, with the product page
+    let push = json!({ "notify": "web_push", "notify_people": ["person.magnus"] });
+    host.call("setup_entry", json!({ "entry": with_alert(6500.0, push.clone()) })).await.unwrap();
+    let c = calls();
+    assert_eq!(c.len(), 1, "{c:?}");
+    assert_eq!((c[0]["domain"].as_str(), c[0]["service"].as_str()), (Some("notify"), Some("web_push")));
+    let d = &c[0]["data"];
+    assert_eq!(d["title"], "Prisalarm: Apple iPhone 16, 128GB Black");
+    assert_eq!(d["message"], "Apple iPhone 16, 128GB Black koster 6118 DKK hos NordicElectronics. Din grænse er 6500 DKK.");
+    assert_eq!(d["target"], json!(["person.magnus"]));
+    assert!(d["data"]["url"].as_str().unwrap().starts_with("https://www.pricerunner.dk/pl/1-3397102161"));
+
+    // the next updates and a restart send nothing more
+    tokio::time::sleep(Duration::from_millis(700)).await;
+    host.call("unload_entry", json!({ "entry_id": "e1" })).await.unwrap();
+    host.call("setup_entry", json!({ "entry": with_alert(6500.0, push.clone()) })).await.unwrap();
+    assert_eq!(calls().len(), 1);
+
+    // over the maximum: nothing, and the next drop under it sends again
+    host.call("setup_entry", json!({ "entry": with_alert(6000.0, push.clone()) })).await.unwrap();
+    assert_eq!(calls().len(), 1);
+    host.call("setup_entry", json!({ "entry": with_alert(6500.0, json!({ "notify": "persistent_notification" })) })).await.unwrap();
+    let c = calls();
+    assert_eq!(c.len(), 2);
+    assert_eq!((c[1]["domain"].as_str(), c[1]["service"].as_str()), (Some("persistent_notification"), Some("create")));
+    assert_eq!(c[1]["data"]["notification_id"], "pricerunner_e1_3397102161");
+
+    // a new maximum the price is under sends again, here to another service
+    host.call("setup_entry", json!({ "entry": with_alert(6200.0, json!({ "notify": "notify.telegram" })) })).await.unwrap();
+    let c = calls();
+    assert_eq!(c.len(), 3);
+    assert_eq!((c[2]["domain"].as_str(), c[2]["service"].as_str()), (Some("notify"), Some("telegram")));
+    host.call("unload_entry", json!({ "entry_id": "e1" })).await.unwrap();
 }
 
 /// Against the real Pricerunner: `cargo test -- --ignored live --nocapture`.

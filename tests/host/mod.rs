@@ -18,6 +18,8 @@ pub struct Recorded {
     pub states: HashMap<String, (String, Value)>,
     pub issues: Vec<String>,
     pub events: Vec<(String, Value)>,
+    /// `hub/call_service` params: domain, service and data.
+    pub calls: Vec<Value>,
 }
 
 pub struct FakeHost {
@@ -123,6 +125,10 @@ fn answer(rec: &Mutex<Recorded>, method: &str, p: &Value) -> Value {
         }
         "event/fire" => {
             rec.events.push((p["event_type"].as_str().unwrap_or("").to_string(), p["data"].clone()));
+            Value::Null
+        }
+        "hub/call_service" => {
+            rec.calls.push(p.clone());
             Value::Null
         }
         "issue/create" => {

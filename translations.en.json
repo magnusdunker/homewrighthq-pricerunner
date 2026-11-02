@@ -3,16 +3,20 @@
   "steps": {
     "user": { "title": "Pricerunner", "description": "Pick the country and paste links to the products you want to keep an eye on. You can also search for a product by name." },
     "pick": { "title": "Pick products", "description": "Pick the products you want to follow." },
-    "init": { "title": "Products", "description": "Remove products, or add new ones with a link or a search." }
+    "init": { "title": "Products", "description": "Remove products, or add new ones with a link or a search." },
+    "alerts": { "title": "Price alert", "description": "Enter the most you want to pay for a product. When the lowest price is at or below it, you get one message. Leave the field empty for no message." }
   },
-  "fields": { "site": "Country", "links": "Links", "search": "Search", "found": "Products found", "keep": "Products" },
+  "fields": { "site": "Country", "links": "Links", "search": "Search", "found": "Products found", "keep": "Products", "notify": "Message by", "notify_people": "Push to", "notify_service": "Other service" },
   "hints": {
     "links": "Links to products on Pricerunner, one per line. Copy the address from the product's page.",
     "search": "Or search for a product by name.",
-    "keep": "Untick a product to stop following it."
+    "keep": "Untick a product to stop following it.",
+    "notify_people": "Empty means everyone with push turned on.",
+    "notify_service": "E.g. notify.telegram. Used when \"Another service\" is chosen."
   },
   "values": {
-    "site": { "dk": "Denmark (pricerunner.dk)", "se": "Sweden (pricerunner.se)", "uk": "United Kingdom (pricerunner.com)" }
+    "site": { "dk": "Denmark (pricerunner.dk)", "se": "Sweden (pricerunner.se)", "uk": "United Kingdom (pricerunner.com)" },
+    "notify": { "web_push": "Push notification", "persistent_notification": "Notification in the interface", "all": "All message services (notify.notify)", "other": "Another service" }
   },
   "errors": {
     "cannot_connect": "Could not fetch from Pricerunner. Try again in a moment.",
@@ -20,7 +24,9 @@
     "other_site": "The link is to another country's Pricerunner than the one you picked.",
     "not_found": "Pricerunner does not have the product.",
     "no_results": "The search found no products.",
-    "no_products": "Pick at least one product."
+    "no_products": "Pick at least one product.",
+    "bad_price": "Enter the price as a number, e.g. 5999.",
+    "bad_service": "Enter the name of a notify service, e.g. notify.telegram."
   },
   "abort": { "unknown_entry": "The entry does not exist." }
 }
