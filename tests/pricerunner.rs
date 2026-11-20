@@ -9,13 +9,14 @@ use homewright_pricerunner::api::{self, LinkError};
 use homewright_pricerunner::Pricerunner;
 use host::FakeHost;
 use serde_json::{json, Value};
-use wiremock::matchers::{method, path, query_param};
+use wiremock::matchers::{method, path, query_param, query_param_is_missing};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
 const IPHONE: &str = "3397102161";
 const INITIAL: &str = "/dk/api/product-detail-edge-rest/public/product-detail/v0/initial/DK";
 const OFFERS: &str = "/dk/api/product-detail-edge-rest/public/product-detail/v0/offers/DK";
 const SUGGEST: &str = "/dk/api/instant-search-edge-rest/public/search/suggest/DK";
+const OFFERS_DE: &str = "/de/api/product-detail-edge-rest/public/product-detail/v0/offers/DE";
 
 fn fixture(name: &str) -> Value {
     let p = format!("{}/tests/fixtures/{name}.json", env!("CARGO_MANIFEST_DIR"));
@@ -43,6 +44,14 @@ fn links() {
     assert_eq!(api::parse_link("https://www.elgiganten.dk/product/123"), Err(LinkError::Bad));
     assert_eq!(api::parse_link("https://www.pricerunner.de/pl/1-123"), Err(LinkError::OtherSite));
 
+    // Klarna's sites, with the country in the path
+    let l = api::parse_link("https://www.klarna.com/de/shopping/pl/cl94/3216399795/Kopfhoerer/Apple-AirPods-Pro-3/").unwrap();
+    assert_eq!((l.site.map(|s| s.key), l.category.as_str(), l.id.as_str()), (Some("de"), "94", "3216399795"));
+    let l = api::parse_link("klarna.com/us/shopping/pl/cl94/3216399795").unwrap();
+    assert_eq!(l.site.map(|s| s.key), Some("us"));
+    assert_eq!(api::parse_link("https://www.klarna.com/au/shopping/pl/cl94/3216399795/"), Err(LinkError::OtherSite));
+    assert_eq!(api::parse_link("https://www.klarna.com/de/"), Err(LinkError::Bad));
+
     assert_eq!(api::split_links("a\nb, c  d\r\n"), ["a", "b", "c", "d"]);
 }
 
@@ -56,6 +65,11 @@ fn product_page() {
     assert_eq!(p.category_name.as_deref(), Some("Mobiltelefoner"));
     assert_eq!(dk().product_url(&p), "https://www.pricerunner.dk/pl/1-3397102161/Mobiltelefoner/Apple-iPhone-16-128GB-Black-Sammenlign-Priser");
     assert_eq!(api::Product::from_json(&p.to_json()).as_ref(), Some(&p));
+    // the Danish path is not used on Klarna's German site
+    let p = p.from(dk());
+    assert_eq!(api::site("de").unwrap().product_url(&p), "https://www.klarna.com/de/shopping/pl/cl1/3397102161/");
+    assert_eq!(api::site("se").unwrap().product_url(&p), "https://www.pricerunner.se/pl/1-3397102161");
+    assert!(dk().product_url(&p).ends_with("-Sammenlign-Priser"));
 
     // an unknown id: no product, a redirect to the category
     assert_eq!(api::parse_initial(&fixture("initial-DK-missing")), None);
@@ -78,7 +92,7 @@ fn search() {
 
 #[test]
 fn offers() {
-    let p = api::parse_offers(&fixture("offers-DK-3397102161"), dk());
+    let p = api::parse_offers(&fixture("offers-DK-3397102161"), dk(), false);
     // ten offers and two sponsored ones
     assert_eq!(p.offers.len(), 12);
     assert_eq!(p.count, 32);
@@ -102,11 +116,18 @@ fn offers() {
     assert_eq!(shops.keys().next().map(String::as_str), Some("NordicElectronics"));
     assert_eq!(shops["Bilka"], json!(7499.0));
 
-    let se = api::parse_offers(&fixture("offers-SE-3607137081"), api::site("se").unwrap());
+    // with foreign shops the count and the highest price include them
+    let all = api::parse_offers(&fixture("offers-DK-3397102161"), dk(), true);
+    assert_eq!((all.count, all.highest), (35, Some(8559.0)));
+    // Klarna has no shop pages
+    let de = api::parse_offers(&fixture("offers-DK-3397102161"), api::site("de").unwrap(), false);
+    assert_eq!(de.cheapest().unwrap().shop_page, None);
+
+    let se = api::parse_offers(&fixture("offers-SE-3607137081"), api::site("se").unwrap(), false);
     assert_eq!(se.cheapest().map(|o| (o.price, o.currency.as_str())), Some((18489.0, "SEK")));
 
     // all sold out
-    let none = api::parse_offers(&json!({ "offers": [], "staticOffers": [], "merchants": {}, "offersSummary": { "nationalOffer": null } }), dk());
+    let none = api::parse_offers(&json!({ "offers": [], "staticOffers": [], "merchants": {}, "offersSummary": { "nationalOffer": null } }), dk(), false);
     assert_eq!((none.cheapest(), none.count), (None, 0));
 
     assert_eq!(api::price_state(6118.0), "6118");
@@ -174,14 +195,17 @@ async fn config_flow_with_links() {
 
     let r = host.call("config_flow", json!({ "flow": flow(json!({})), "step": "user" })).await.unwrap();
     assert_eq!(r["result"]["step_id"], "user");
-    let sites = r["result"]["schema"]["properties"]["site"]["oneOf"].as_array().unwrap();
-    assert_eq!(sites.len(), 3);
-    assert_eq!(r["result"]["schema"]["properties"]["site"]["default"], "dk");
+    let sites = r["result"]["schema"]["properties"]["sites"]["items"]["oneOf"].as_array().unwrap();
+    assert_eq!(sites.len(), 16);
+    assert_eq!(r["result"]["schema"]["properties"]["sites"]["default"], json!(["dk"]));
+    assert_eq!(r["result"]["schema"]["properties"]["foreign"]["default"], false);
     assert_eq!(r["result"]["schema"]["properties"]["links"]["format"], "textarea");
 
     // nothing, a shop's link, a Swedish link on the Danish site, a product that is gone
     let r = host.call("config_flow", user(json!({ "site": "dk" }))).await.unwrap();
     assert_eq!(r["result"]["errors"], json!({ "base": "no_products" }));
+    let r = host.call("config_flow", user(json!({ "sites": [], "links": IPHONE }))).await.unwrap();
+    assert_eq!(r["result"]["errors"], json!({ "sites": "no_sites" }));
     let r = host.call("config_flow", user(json!({ "site": "dk", "links": "https://www.elgiganten.dk/x" }))).await.unwrap();
     assert_eq!(r["result"]["errors"], json!({ "links": "bad_link" }));
     // the form keeps what was typed
@@ -204,7 +228,10 @@ async fn config_flow_with_links() {
     assert_eq!(r["result"]["title"], "Pricerunner pricerunner.dk");
     let data = &r["result"]["data"];
     assert_eq!(data["site"], "dk");
+    assert_eq!(data["sites"], json!(["dk"]));
+    assert_eq!(data["foreign"], false);
     assert_eq!(data["products"].as_array().unwrap().len(), 1);
+    assert_eq!(data["products"][0]["site"], "dk");
     assert_eq!(data["products"][0]["name"], "Apple iPhone 16, 128GB Black");
     assert_eq!(data["products"][0]["brand"], "Apple");
     assert_eq!(data["max_prices"], json!({}));
@@ -484,23 +511,130 @@ async fn a_price_alert_is_sent_once() {
     host.call("unload_entry", json!({ "entry_id": "e1" })).await.unwrap();
 }
 
+/// One offer from Amazon on Klarna's German site.
+fn de_offers() -> Value {
+    json!({
+        "offers": [{ "id": "o1", "merchantId": "2", "price": { "amount": "599.00", "currency": "EUR" }, "stockStatus": "IN_STOCK", "url": "https://clk.klarna.com/de/gotostore/v1/o1" }],
+        "staticOffers": [],
+        "merchants": { "2": { "id": "2", "name": "Amazon", "url": "/ri/2/Amazon/" } },
+        "offersSummary": { "nationalOffer": { "count": 1, "maxPrice": { "amount": "599.00", "currency": "EUR" } } },
+        "images": []
+    })
+}
+
+#[tokio::test]
+async fn several_countries_and_foreign_shops() {
+    let server = MockServer::start().await;
+    pricerunner(&server).await;
+    // without the filter on the country, Amazon.de is the cheapest on pricerunner.dk
+    let mut dk_all = fixture("offers-DK-3397102161");
+    let amazon = json!({ "id": "amz", "merchantId": "74931", "price": { "amount": "5999.00", "currency": "DKK" }, "stockStatus": "IN_STOCK", "url": "https://clk.klarna.com/dk/gotostore/v1/amz" });
+    dk_all["offers"].as_array_mut().unwrap().insert(0, amazon);
+    dk_all["merchants"]["74931"] = json!({ "id": "74931", "name": "Amazon", "url": "/ri/74931/Amazon" });
+    Mock::given(method("GET"))
+        .and(path(format!("{OFFERS}/{IPHONE}")))
+        .and(query_param_is_missing("af_ORIGIN"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(dk_all))
+        .mount(&server)
+        .await;
+    serve(&server, &format!("{OFFERS_DE}/{IPHONE}"), 200, de_offers()).await;
+    let host = start(&server).await;
+
+    // two countries and foreign shops, with a maximum for each country
+    let r = host.call("config_flow", user(json!({ "sites": ["de", "dk"], "foreign": true, "links": IPHONE }))).await.unwrap();
+    assert_eq!(r["result"]["step_id"], "alerts", "{r}");
+    let props = &r["result"]["schema"]["properties"];
+    assert_eq!(props[format!("max_{IPHONE}")]["title"], "Apple iPhone 16, 128GB Black, Danmark (DKK)");
+    assert_eq!(props[format!("max_{IPHONE}_de")]["title"], "Apple iPhone 16, 128GB Black, Tyskland (EUR)");
+    let r = host.call("config_flow", alerts(r["data"].clone(), json!({ format!("max_{IPHONE}_de"): "650" }))).await.unwrap();
+    assert_eq!(r["result"]["title"], "Pricerunner pricerunner.dk, klarna.com/de");
+    let d = r["result"]["data"].clone();
+    assert_eq!((d["site"].clone(), d["sites"].clone(), d["foreign"].clone()), (json!("dk"), json!(["dk", "de"]), json!(true)));
+    assert_eq!(d["max_prices"], json!({ format!("{IPHONE}@de"): 650.0 }));
+
+    let e = json!({ "entry_id": "e1", "domain": "pricerunner", "title": "Pricerunner", "data": d, "options": {} });
+    host.call("setup_entry", json!({ "entry": e })).await.unwrap();
+    {
+        let rec = host.rec.lock().unwrap();
+        // one device with a price per country
+        assert_eq!(rec.devices.len(), 1);
+        assert_eq!(rec.entities["sensor.e1_3397102161_price"].0["name"], "Laveste pris Danmark");
+        let (spec, _) = &rec.entities["sensor.e1_3397102161_de_price"];
+        assert_eq!((spec["name"].as_str(), spec["unit_of_measurement"].as_str()), (Some("Laveste pris Tyskland"), Some("EUR")));
+    }
+    let (state, a) = host.state("sensor.e1_3397102161_price").unwrap();
+    assert_eq!((state.as_str(), a["shop"].as_str(), a["offers"].as_u64()), ("5999", Some("Amazon"), Some(35)));
+    let (state, a) = host.state("sensor.e1_3397102161_de_price").unwrap();
+    assert_eq!((state.as_str(), a["currency"].as_str(), a["country"].as_str()), ("599", Some("EUR"), Some("de")));
+    assert_eq!(a["product_url"], "https://www.klarna.com/de/shopping/pl/cl1/3397102161/");
+    assert_eq!(a["shop_page"], Value::Null);
+    assert_eq!(a["attribution"], "Priser fra Klarna");
+    assert_eq!(host.state("sensor.e1_3397102161_de_shop").unwrap().0, "Amazon");
+
+    // the German price is under its maximum, the Danish one has none
+    let c = host.rec.lock().unwrap().calls.clone();
+    assert_eq!(c.len(), 1, "{c:?}");
+    assert_eq!(c[0]["data"]["message"], "Apple iPhone 16, 128GB Black koster 599 EUR hos Amazon i Tyskland. Din grænse er 650 EUR.");
+    assert_eq!(c[0]["data"]["data"]["tag"], format!("pricerunner-{IPHONE}_de"));
+    host.call("unload_entry", json!({ "entry_id": "e1" })).await.unwrap();
+}
+
+#[tokio::test]
+async fn options_flow_changes_countries() {
+    let server = MockServer::start().await;
+    pricerunner(&server).await;
+    let host = start(&server).await;
+    // an entry from before several countries: `site` and no `sites`
+    let mut e = entry(json!([iphone()]));
+    e["options"] = json!({ "max_prices": { IPHONE: 6000.0 } });
+    let call = |step: &str, data: Value, input: Value| json!({ "flow": { "flow_id": "o1", "source": "options", "data": data, "entry": e }, "step": step, "input": input });
+
+    let r = host.call("options_flow", call("init", json!({}), Value::Null)).await.unwrap();
+    let props = &r["result"]["schema"]["properties"];
+    assert_eq!((props["sites"]["default"].clone(), props["foreign"]["default"].clone()), (json!(["dk"]), json!(false)));
+
+    let r = host.call("options_flow", call("init", json!({}), json!({ "sites": [] }))).await.unwrap();
+    assert_eq!(r["result"]["errors"], json!({ "sites": "no_sites" }));
+
+    let r = host.call("options_flow", call("init", json!({}), json!({ "sites": ["dk", "se"], "foreign": true }))).await.unwrap();
+    assert_eq!(r["result"]["step_id"], "alerts", "{r}");
+    let props = &r["result"]["schema"]["properties"];
+    // the old maximum stays with Denmark
+    assert_eq!(props[format!("max_{IPHONE}")]["default"], 6000.0);
+    assert_eq!(props[format!("max_{IPHONE}_se")]["title"], "Apple iPhone 16, 128GB Black, Sverige (SEK)");
+    let input = json!({ format!("max_{IPHONE}"): 6000, format!("max_{IPHONE}_se"): 7000 });
+    let r = host.call("options_flow", call("alerts", r["data"].clone(), input)).await.unwrap();
+    let d = &r["result"]["data"];
+    assert_eq!((d["sites"].clone(), d["foreign"].clone()), (json!(["dk", "se"]), json!(true)));
+    assert_eq!(d["max_prices"], json!({ IPHONE: 6000.0, format!("{IPHONE}@se"): 7000.0 }));
+    assert!(d.get("site").is_none());
+
+    // without Denmark only the Swedish field is left
+    let r = host.call("options_flow", call("init", json!({}), json!({ "sites": ["se"] }))).await.unwrap();
+    let props = r["result"]["schema"]["properties"].as_object().unwrap();
+    assert!(props.contains_key(&format!("max_{IPHONE}_se")));
+    assert!(!props.contains_key(&format!("max_{IPHONE}")));
+    assert_eq!(props[&format!("max_{IPHONE}_se")]["title"], "Apple iPhone 16, 128GB Black (SEK)");
+}
+
 /// Against the real Pricerunner: `cargo test -- --ignored live --nocapture`.
 #[tokio::test]
 #[ignore]
 async fn live() {
     let host = FakeHost::start(Pricerunner::default());
     host.call("initialize", json!({ "api_version": 1, "data_dir": std::env::temp_dir() })).await.unwrap();
-    for (site, q) in [("dk", "iphone 16"), ("se", "iphone 16"), ("uk", "iphone 16")] {
+    for (site, q) in [("dk", "iphone 16"), ("se", "iphone 16"), ("uk", "iphone 16"), ("de", "iphone 16"), ("us", "airpods pro")] {
         let r = host.call("config_flow", user(json!({ "site": site, "search": q }))).await.unwrap();
         let first = &r["result"]["schema"]["properties"]["found"]["items"]["oneOf"][0];
         println!("{site}: {first}");
         let data = r["data"].clone();
         let r = host.call("config_flow", json!({ "flow": flow(data), "step": "pick", "input": { "found": [first["const"]] } })).await.unwrap();
-        let products = r["result"]["data"]["products"].clone();
+        // the alert step holds the products
+        let products = r["data"]["products"].clone();
         // the link to the product, through the product page
-        let link = format!("https://{}{}", api::site(site).unwrap().host, products[0]["path"].as_str().unwrap());
+        let link = format!("{}{}", api::site(site).unwrap().web, products[0]["path"].as_str().unwrap());
         let r = host.call("config_flow", user(json!({ "site": site, "links": link }))).await.unwrap();
-        assert_eq!(r["result"]["type"], "create_entry", "{r}");
+        assert_eq!(r["result"]["step_id"], "alerts", "{r}");
         let entry_id = format!("live-{site}");
         let entry = json!({ "entry_id": entry_id, "data": { "site": site, "products": products } });
         host.call("setup_entry", json!({ "entry": entry })).await.unwrap();

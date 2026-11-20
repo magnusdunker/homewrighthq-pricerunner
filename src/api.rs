@@ -1,5 +1,9 @@
 //! Pricerunner's sites, its product links and the JSON its own web pages
 //! fetch. None of it is a documented API, so it can change without notice.
+//!
+//! Outside Denmark, Sweden and the United Kingdom, Klarna runs the same price
+//! comparison on klarna.com, with the same API under the country's path and
+//! the same product ids. pricerunner.de, .fr and .at send you there.
 
 use std::collections::HashMap;
 use std::sync::OnceLock;
@@ -13,7 +17,11 @@ pub struct Site {
     /// Our key, stored in the entry.
     pub key: &'static str,
     pub name: &'static str,
+    /// The country's name in Danish, for entity names and messages.
+    pub land: &'static str,
     pub host: &'static str,
+    /// Where the site's pages are; the API is under `host`.
+    pub web: &'static str,
     /// The first part of the path to the site's API.
     pub prefix: &'static str,
     pub country: &'static str,
@@ -21,21 +29,36 @@ pub struct Site {
     pub currency: &'static str,
 }
 
-pub const SITES: [Site; 3] = [
-    Site { key: "dk", name: "Danmark (pricerunner.dk)", host: "www.pricerunner.dk", prefix: "dk", country: "DK", language: "da", currency: "DKK" },
-    Site { key: "se", name: "Sverige (pricerunner.se)", host: "www.pricerunner.se", prefix: "se", country: "SE", language: "sv", currency: "SEK" },
-    Site { key: "uk", name: "Storbritannien (pricerunner.com)", host: "www.pricerunner.com", prefix: "uk", country: "UK", language: "en", currency: "GBP" },
+const KLARNA: &str = "www.klarna.com";
+
+pub const SITES: [Site; 16] = [
+    Site { key: "dk", name: "Danmark (pricerunner.dk)", land: "Danmark", host: "www.pricerunner.dk", web: "https://www.pricerunner.dk", prefix: "dk", country: "DK", language: "da", currency: "DKK" },
+    Site { key: "se", name: "Sverige (pricerunner.se)", land: "Sverige", host: "www.pricerunner.se", web: "https://www.pricerunner.se", prefix: "se", country: "SE", language: "sv", currency: "SEK" },
+    Site { key: "uk", name: "Storbritannien (pricerunner.com)", land: "Storbritannien", host: "www.pricerunner.com", web: "https://www.pricerunner.com", prefix: "uk", country: "UK", language: "en", currency: "GBP" },
+    Site { key: "no", name: "Norge (klarna.com/no)", land: "Norge", host: KLARNA, web: "https://www.klarna.com/no/shopping", prefix: "no", country: "NO", language: "nb", currency: "NOK" },
+    Site { key: "fi", name: "Finland (klarna.com/fi)", land: "Finland", host: KLARNA, web: "https://www.klarna.com/fi/shopping", prefix: "fi", country: "FI", language: "fi", currency: "EUR" },
+    Site { key: "de", name: "Tyskland (klarna.com/de)", land: "Tyskland", host: KLARNA, web: "https://www.klarna.com/de/shopping", prefix: "de", country: "DE", language: "de", currency: "EUR" },
+    Site { key: "at", name: "Østrig (klarna.com/at)", land: "Østrig", host: KLARNA, web: "https://www.klarna.com/at/shopping", prefix: "at", country: "AT", language: "de", currency: "EUR" },
+    Site { key: "ch", name: "Schweiz (klarna.com/ch)", land: "Schweiz", host: KLARNA, web: "https://www.klarna.com/ch/shopping", prefix: "ch", country: "CH", language: "de", currency: "CHF" },
+    Site { key: "nl", name: "Holland (klarna.com/nl)", land: "Holland", host: KLARNA, web: "https://www.klarna.com/nl/shopping", prefix: "nl", country: "NL", language: "nl", currency: "EUR" },
+    Site { key: "be", name: "Belgien (klarna.com/be)", land: "Belgien", host: KLARNA, web: "https://www.klarna.com/be/shopping", prefix: "be", country: "BE", language: "nl", currency: "EUR" },
+    Site { key: "fr", name: "Frankrig (klarna.com/fr)", land: "Frankrig", host: KLARNA, web: "https://www.klarna.com/fr/shopping", prefix: "fr", country: "FR", language: "fr", currency: "EUR" },
+    Site { key: "es", name: "Spanien (klarna.com/es)", land: "Spanien", host: KLARNA, web: "https://www.klarna.com/es/shopping", prefix: "es", country: "ES", language: "es", currency: "EUR" },
+    Site { key: "it", name: "Italien (klarna.com/it)", land: "Italien", host: KLARNA, web: "https://www.klarna.com/it/shopping", prefix: "it", country: "IT", language: "it", currency: "EUR" },
+    Site { key: "pl", name: "Polen (klarna.com/pl)", land: "Polen", host: KLARNA, web: "https://www.klarna.com/pl/shopping", prefix: "pl", country: "PL", language: "pl", currency: "PLN" },
+    Site { key: "ie", name: "Irland (klarna.com/ie)", land: "Irland", host: KLARNA, web: "https://www.klarna.com/ie/shopping", prefix: "ie", country: "IE", language: "en", currency: "EUR" },
+    Site { key: "us", name: "USA (klarna.com/us)", land: "USA", host: KLARNA, web: "https://www.klarna.com/us/shopping", prefix: "us", country: "US", language: "en", currency: "USD" },
 ];
 
 pub fn site(key: &str) -> Option<&'static Site> {
     SITES.iter().find(|s| s.key == key)
 }
 
-/// The site a link's host belongs to.
+/// The Pricerunner site a link's host belongs to.
 pub fn site_of_host(host: &str) -> Option<&'static Site> {
     let host = host.to_ascii_lowercase();
     let host = host.strip_prefix("www.").unwrap_or(&host);
-    SITES.iter().find(|s| s.host.trim_start_matches("www.") == host)
+    SITES.iter().filter(|s| !s.is_klarna()).find(|s| s.host.trim_start_matches("www.") == host)
 }
 
 impl Site {
@@ -43,11 +66,26 @@ impl Site {
         format!("https://{}", self.host)
     }
 
-    /// The product page, with the path Pricerunner gave, or one it redirects from.
+    pub fn is_klarna(&self) -> bool {
+        self.host == KLARNA
+    }
+
+    /// `pricerunner.dk` or `klarna.com/de`.
+    pub fn label(&self) -> String {
+        if self.is_klarna() {
+            format!("klarna.com/{}", self.prefix)
+        } else {
+            self.host.trim_start_matches("www.").to_string()
+        }
+    }
+
+    /// The product page, with the path the site gave, or one it redirects from.
+    /// A path from another site is not used.
     pub fn product_url(&self, p: &Product) -> String {
         match &p.path {
-            Some(path) => format!("{}{path}", self.origin()),
-            None => format!("{}/pl/{}-{}", self.origin(), p.category, p.id),
+            Some(path) if p.site.as_deref().is_none_or(|s| s == self.key) => format!("{}{path}", self.web),
+            _ if self.is_klarna() => format!("{}/pl/cl{}/{}/", self.web, p.category, p.id),
+            _ => format!("{}/pl/{}-{}", self.web, p.category, p.id),
         }
     }
 
@@ -56,15 +94,19 @@ impl Site {
         (path, vec![("languageCode", self.language.to_string())])
     }
 
-    /// The offers in the country, cheapest first, with the filters the product page uses.
-    pub fn offers_path(&self, id: &str) -> (String, Vec<(&'static str, String)>) {
+    /// The offers, cheapest first, with the filters the product page uses:
+    /// shops in the country, or with `foreign` shops abroad too.
+    pub fn offers_path(&self, id: &str, foreign: bool) -> (String, Vec<(&'static str, String)>) {
         let path = format!("/{}/api/product-detail-edge-rest/public/product-detail/v0/offers/{}/{id}", self.prefix, self.country);
-        let q = vec![
-            ("af_ORIGIN", "NATIONAL".to_string()),
+        let mut q = vec![];
+        if !foreign {
+            q.push(("af_ORIGIN", "NATIONAL".to_string()));
+        }
+        q.extend([
             ("af_ITEM_CONDITION", "NEW,UNKNOWN".to_string()),
             ("af_STOCK_STATUS", "IN_STOCK,BACKORDER,PREORDER,SPECIAL_ORDER,COLLECT_IN_STORE,UNKNOWN".to_string()),
             ("sortByPreset", "PRICE".to_string()),
-        ];
+        ]);
         (path, q)
     }
 
@@ -85,11 +127,14 @@ pub struct Product {
     pub path: Option<String>,
     pub brand: Option<String>,
     pub category_name: Option<String>,
+    /// The site the name and path are from; `None` in entries from before
+    /// there were several.
+    pub site: Option<String>,
 }
 
 impl Product {
     pub fn to_json(&self) -> Value {
-        json!({ "id": self.id, "category": self.category, "name": self.name, "path": self.path, "brand": self.brand, "category_name": self.category_name })
+        json!({ "id": self.id, "category": self.category, "name": self.name, "path": self.path, "brand": self.brand, "category_name": self.category_name, "site": self.site })
     }
 
     pub fn from_json(v: &Value) -> Option<Self> {
@@ -101,13 +146,20 @@ impl Product {
             path: s("path"),
             brand: s("brand"),
             category_name: s("category_name"),
+            site: s("site"),
         })
+    }
+
+    pub fn from(mut self, site: &Site) -> Self {
+        self.site = Some(site.key.to_string());
+        self
     }
 }
 
+/// `/pl/1-3397102161` on Pricerunner, `/pl/cl94/3216399795` on Klarna.
 fn pl_path() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
-    RE.get_or_init(|| Regex::new(r"/pl/(\d+)-(\d+)").unwrap())
+    RE.get_or_init(|| Regex::new(r"/pl/(?:cl)?(\d+)[-/](\d+)").unwrap())
 }
 
 /// What a user pasted: a product link, or a bare product id.
@@ -134,10 +186,18 @@ pub fn parse_link(s: &str) -> Result<Link, LinkError> {
     }
     let rest = s.strip_prefix("https://").or_else(|| s.strip_prefix("http://")).unwrap_or(s);
     let (host, path) = rest.split_at(rest.find(['/', '?', '#']).unwrap_or(rest.len()));
-    if !host.to_ascii_lowercase().contains("pricerunner.") {
+    let host = host.to_ascii_lowercase();
+    let site = if host.trim_start_matches("www.") == "klarna.com" {
+        // klarna.com/de/shopping/pl/cl94/3216399795/...
+        let c = pl_path().captures(path).ok_or(LinkError::Bad)?;
+        let country = path.trim_start_matches('/').split('/').next().unwrap_or_default().to_ascii_lowercase();
+        let site = SITES.iter().find(|s| s.is_klarna() && s.prefix == country).ok_or(LinkError::OtherSite)?;
+        return Ok(Link { site: Some(site), category: c[1].to_string(), id: c[2].to_string() });
+    } else if host.contains("pricerunner.") {
+        site_of_host(&host).ok_or(LinkError::OtherSite)?
+    } else {
         return Err(LinkError::Bad);
-    }
-    let site = site_of_host(host).ok_or(LinkError::OtherSite)?;
+    };
     let c = pl_path().captures(path).ok_or(LinkError::Bad)?;
     Ok(Link { site: Some(site), category: c[1].to_string(), id: c[2].to_string() })
 }
@@ -172,6 +232,7 @@ pub fn parse_initial(v: &Value) -> Option<Product> {
         path,
         brand: v.get("brand").and_then(|b| text(b, "name")),
         category_name: v.get("category").and_then(|c| text(c, "name")),
+        site: None,
     })
 }
 
@@ -188,7 +249,7 @@ pub fn parse_search(v: &Value) -> Vec<Found> {
     list.filter_map(|p| {
         let path = text(p, "url");
         let category = path.as_deref().and_then(|u| pl_path().captures(u)).map(|c| c[1].to_string()).unwrap_or_else(|| "0".into());
-        let product = Product { id: text(p, "id")?, category, name: text(p, "name")?, path, brand: None, category_name: text(p, "categoryName") };
+        let product = Product { id: text(p, "id")?, category, name: text(p, "name")?, path, brand: None, category_name: text(p, "categoryName"), site: None };
         let low = p.get("lowestPrice").filter(|l| l.is_object());
         Some(Found { product, price: low.and_then(amount), currency: low.and_then(|l| text(l, "currency")) })
     })
@@ -201,7 +262,7 @@ pub struct Offer {
     pub id: String,
     pub shop: String,
     pub shop_id: String,
-    /// The shop's page on Pricerunner.
+    /// The shop's page on Pricerunner. Klarna's sites have none.
     pub shop_page: Option<String>,
     pub shop_logo: Option<String>,
     pub price: f64,
@@ -219,7 +280,8 @@ pub struct Offer {
 pub struct Prices {
     /// Cheapest first.
     pub offers: Vec<Offer>,
-    /// The number of offers in the country, as Pricerunner counts them.
+    /// The number of offers in the country, and abroad with foreign shops,
+    /// as Pricerunner counts them.
     pub count: u64,
     pub highest: Option<f64>,
     pub picture: Option<String>,
@@ -234,7 +296,7 @@ pub fn picture_url(path: &str) -> String {
     }
 }
 
-pub fn parse_offers(v: &Value, site: &Site) -> Prices {
+pub fn parse_offers(v: &Value, site: &Site, foreign: bool) -> Prices {
     let merchants: HashMap<&str, &Value> =
         v.get("merchants").and_then(Value::as_object).map(|m| m.iter().map(|(k, v)| (k.as_str(), v)).collect()).unwrap_or_default();
     let lists = ["offers", "staticOffers"].into_iter().filter_map(|k| v.get(k).and_then(Value::as_array)).flatten();
@@ -250,7 +312,11 @@ pub fn parse_offers(v: &Value, site: &Site) -> Prices {
         offers.push(Offer {
             id,
             shop: m.and_then(|m| text(m, "name")).unwrap_or_else(|| shop_id.clone()),
-            shop_page: m.and_then(|m| text(m, "url")).map(|u| if u.starts_with('/') { format!("{}{u}", site.origin()) } else { u }),
+            shop_page: m.and_then(|m| text(m, "url")).and_then(|u| match u.starts_with('/') {
+                true if site.is_klarna() => None,
+                true => Some(format!("{}{u}", site.web)),
+                false => Some(u),
+            }),
             shop_logo: m.and_then(|m| m.get("logo")).and_then(|l| text(l, "url")),
             shop_id,
             price,
@@ -263,9 +329,14 @@ pub fn parse_offers(v: &Value, site: &Site) -> Prices {
     }
     offers.sort_by(|a, b| a.price.total_cmp(&b.price).then_with(|| a.shop.cmp(&b.shop)));
 
-    let national = v.get("offersSummary").and_then(|s| s.get("nationalOffer")).filter(|n| n.is_object());
-    let count = national.and_then(|n| n.get("count")).and_then(Value::as_u64).unwrap_or(offers.len() as u64);
-    let highest = national.and_then(|n| n.get("maxPrice")).filter(|p| p.is_object()).and_then(amount);
+    let summary = |k: &str| v.get("offersSummary").and_then(|s| s.get(k)).filter(|n| n.is_object());
+    let mut parts = vec![summary("nationalOffer")];
+    if foreign {
+        parts.push(summary("internationalOffer"));
+    }
+    let parts: Vec<&Value> = parts.into_iter().flatten().collect();
+    let count = if parts.is_empty() { offers.len() as u64 } else { parts.iter().filter_map(|n| n.get("count").and_then(Value::as_u64)).sum() };
+    let highest = parts.iter().filter_map(|n| n.get("maxPrice").filter(|p| p.is_object()).and_then(amount)).reduce(f64::max);
     let picture = v.get("images").and_then(Value::as_array).and_then(|i| i.first()).and_then(|i| text(i, "url").or_else(|| text(i, "path")));
     Prices { offers, count, highest, picture: picture.as_deref().map(picture_url) }
 }

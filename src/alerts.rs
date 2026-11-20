@@ -2,7 +2,10 @@
 //! the lowest price is at or below it.
 //!
 //! The settings live in the entry next to the products:
-//! - `max_prices`: product id -> maximum price
+//! - `max_prices`: slot -> maximum price, in the country's currency. A slot
+//!   is the product id for the entry's first country, the one in `site`, and
+//!   `<id>@<country>` for the others, so entries from before there were
+//!   several countries keep their alerts.
 //! - `notify`: `web_push`, `persistent_notification` or a `notify.<name>`
 //!   service such as `notify.notify` or `notify.telegram`
 //! - `notify_users`: HomewrightHQ user ids for `web_push`; the push goes to
@@ -18,7 +21,7 @@ use std::sync::Mutex;
 
 use thehome_plugin::{json, Entry, Host, Map, Value};
 
-use crate::api::{self, Offer, Product};
+use crate::api::{self, Offer, Product, Site};
 
 const PUSH: &str = "web_push";
 const PERSISTENT: &str = "persistent_notification";
@@ -113,11 +116,25 @@ impl Alerts {
         m
     }
 
-    /// Only the products that are still followed.
-    pub fn keep(mut self, products: &[Product]) -> Self {
-        self.max.retain(|id, _| products.iter().any(|p| &p.id == id));
+    /// Only the products and countries that are still followed.
+    pub fn keep(mut self, slots: &[String]) -> Self {
+        self.max.retain(|s, _| slots.contains(s));
         self
     }
+}
+
+/// A product in a country: the product id in `home`, `<id>@<country>` elsewhere.
+pub fn slot(id: &str, site: &Site, home: &Site) -> String {
+    if site == home {
+        id.to_string()
+    } else {
+        format!("{id}@{}", site.key)
+    }
+}
+
+/// Every slot of the products in the countries.
+pub fn slots(products: &[Product], sites: &[&'static Site], home: &Site) -> Vec<String> {
+    products.iter().flat_map(|p| sites.iter().map(|s| slot(&p.id, s, home))).collect()
 }
 
 impl Default for Alerts {
@@ -126,19 +143,36 @@ impl Default for Alerts {
     }
 }
 
-fn max_key(id: &str) -> String {
-    format!("max_{id}")
+/// The form field of a slot: `max_<id>` or `max_<id>_<country>`.
+fn max_key(slot: &str) -> String {
+    format!("max_{}", slot.replace('@', "_"))
 }
 
-/// The form: a maximum per product, and where the message goes.
-pub fn schema(products: &[Product], current: &Alerts, currency: &str) -> Value {
-    let mut props = Map::new();
+/// The fields, one per product and country: slot, field and title.
+fn fields(products: &[Product], sites: &[&'static Site], home: &Site) -> Vec<(String, String, String)> {
+    let mut out = vec![];
     for p in products {
-        let mut f = json!({ "type": "number", "title": format!("{} ({currency})", p.name), "minimum": 0 });
-        if let Some(m) = current.max.get(&p.id) {
+        for s in sites {
+            let slot = slot(&p.id, s, home);
+            let title = match sites.len() {
+                1 => format!("{} ({})", p.name, s.currency),
+                _ => format!("{}, {} ({})", p.name, s.land, s.currency),
+            };
+            out.push((max_key(&slot), slot, title));
+        }
+    }
+    out
+}
+
+/// The form: a maximum per product and country, and where the message goes.
+pub fn schema(products: &[Product], sites: &[&'static Site], home: &Site, current: &Alerts) -> Value {
+    let mut props = Map::new();
+    for (key, slot, title) in fields(products, sites, home) {
+        let mut f = json!({ "type": "number", "title": title, "minimum": 0 });
+        if let Some(m) = current.max.get(&slot) {
             f["default"] = json!(m);
         }
-        props.insert(max_key(&p.id), f);
+        props.insert(key, f);
     }
     let (choice, other, who) = match &current.notify {
         Notify::Push(u) => (PUSH.to_string(), String::new(), u.clone()),
@@ -177,17 +211,17 @@ pub fn schema(products: &[Product], current: &Alerts, currency: &str) -> Value {
 }
 
 /// The settings from a sent form, or the errors for its fields.
-pub fn from_input(products: &[Product], input: &Value) -> Result<Alerts, Value> {
+pub fn from_input(products: &[Product], sites: &[&'static Site], home: &Site, input: &Value) -> Result<Alerts, Value> {
     let mut errors = Map::new();
     let mut max = HashMap::new();
-    for p in products {
-        match price(input.get(max_key(&p.id))) {
+    for (key, slot, _) in fields(products, sites, home) {
+        match price(input.get(&key)) {
             Ok(Some(n)) => {
-                max.insert(p.id.clone(), n);
+                max.insert(slot, n);
             }
             Ok(None) => {}
             Err(()) => {
-                errors.insert(max_key(&p.id), json!("bad_price"));
+                errors.insert(key, json!("bad_price"));
             }
         }
     }
@@ -278,10 +312,20 @@ impl Sent {
     }
 }
 
+/// A product in one country, for its alert.
+pub struct Watch<'a> {
+    pub product: &'a Product,
+    pub slot: &'a str,
+    /// The country, in the message, when the entry has several.
+    pub land: Option<&'a str>,
+    pub url: &'a str,
+}
+
 /// What a product's price means for its alert.
-pub async fn check(host: &Host, sent: &Sent, alerts: &Alerts, entry_id: &str, product: &Product, url: &str, cheapest: Option<&Offer>) {
-    let key = format!("{entry_id}/{}", product.id);
-    let Some(&max) = alerts.max.get(&product.id) else { return };
+pub async fn check(host: &Host, sent: &Sent, alerts: &Alerts, entry_id: &str, w: &Watch<'_>, cheapest: Option<&Offer>) {
+    let product = w.product;
+    let key = format!("{entry_id}/{}", w.slot);
+    let Some(&max) = alerts.max.get(w.slot) else { return };
     // sold out everywhere says nothing about the price
     let Some(o) = cheapest else { return };
     if o.price > max {
@@ -293,23 +337,26 @@ pub async fn check(host: &Host, sent: &Sent, alerts: &Alerts, entry_id: &str, pr
     }
     let cur = &o.currency;
     let title = format!("Prisalarm: {}", product.name);
+    let land = w.land.map(|l| format!(" i {l}")).unwrap_or_default();
     let message = format!(
-        "{} koster {} {cur} hos {}. Din grænse er {} {cur}.",
+        "{} koster {} {cur} hos {}{land}. Din grænse er {} {cur}.",
         product.name,
         api::price_state(o.price),
         o.shop,
         api::price_state(max)
     );
-    match send(host, alerts, entry_id, product, url, &title, &message).await {
+    match send(host, alerts, entry_id, w, &title, &message).await {
         Ok(()) => sent.set(&key, Some(max)),
         Err(e) => crate::warn!("prisalarm for {}: {e}", product.name),
     }
 }
 
-async fn send(host: &Host, alerts: &Alerts, entry_id: &str, product: &Product, url: &str, title: &str, message: &str) -> Result<(), thehome_plugin::Error> {
+async fn send(host: &Host, alerts: &Alerts, entry_id: &str, w: &Watch<'_>, title: &str, message: &str) -> Result<(), thehome_plugin::Error> {
+    let url = w.url;
+    let tag = w.slot.replace('@', "_");
     let (domain, service, mut data) = match &alerts.notify {
         Notify::Push(users) => {
-            let mut d = json!({ "title": title, "message": message, "data": { "url": url, "tag": format!("pricerunner-{}", product.id) } });
+            let mut d = json!({ "title": title, "message": message, "data": { "url": url, "tag": format!("pricerunner-{tag}") } });
             if !users.is_empty() {
                 d["target"] = json!(users);
             }
@@ -318,7 +365,7 @@ async fn send(host: &Host, alerts: &Alerts, entry_id: &str, product: &Product, u
         Notify::Persistent => (
             PERSISTENT,
             "create".to_string(),
-            json!({ "title": title, "message": format!("{message} [Se priserne]({url})"), "notification_id": format!("pricerunner_{entry_id}_{}", product.id) }),
+            json!({ "title": title, "message": format!("{message} [Se priserne]({url})"), "notification_id": format!("pricerunner_{entry_id}_{tag}") }),
         ),
         Notify::Service(s) => ("notify", s.trim_start_matches("notify.").to_string(), json!({ "title": title, "message": message })),
     };
